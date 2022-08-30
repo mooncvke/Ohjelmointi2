@@ -13,15 +13,16 @@ int main()
         if ( num % 3 == 0 and num % 7 == 0 ) {
             std::cout << "zip boing" << std::endl;
         }
-        if ( num % 3 == 0) {
-            std::cout<<"zip" << std::endl;
+        else if ( num % 3 == 0) {
+            std::cout<< "zip" << std::endl;
         }
-        if ( num % 7 == 0) {
+        else if ( num % 7 == 0) {
             std::cout << "boing" << std::endl;
+        } else {
+            std::cout<<num<<std::endl;
         }
-
-        std::cout<<num<<std::endl;
         ++num;
+
     }
 
     return 0;
