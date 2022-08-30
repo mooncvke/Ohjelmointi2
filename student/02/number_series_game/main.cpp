@@ -10,6 +10,9 @@ int main()
 
     int num =1;
     while (num <= amount) {
+        if ( num % 3 == 0) {
+            std::cout<<"zip" << std::endl;
+        }
 
         std::cout<<num<<std::endl;
         ++num;
