@@ -5,7 +5,15 @@ int main()
 {
     std::cout << "How many numbers would you like to have? ";
 
-    // Write your code here
+    int amount;
+    std::cin >> amount;
+
+    int num =1;
+    while (num <= amount) {
+
+        std::cout<<num<<std::endl;
+        ++num;
+    }
 
     return 0;
 }
