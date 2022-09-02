@@ -35,11 +35,11 @@ int main()
     int drawn;
     cin >> drawn;
 
-    if (total < 1) {
-        cout << "The number of balls must be positive number." << endl;
+    if (total < 1 or drawn < 1) {
+        cout << "The number of balls must be a positive number." << endl;
 
-    } else if (drawn < 1){
-        cout << "The number of balls must be positive number." << endl;
+    } else if (drawn > total){
+        cout << "The maximum number of drawn balls is the total amount of balls." << endl;
 
 
     } else {
