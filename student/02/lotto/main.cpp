@@ -31,7 +31,7 @@ int main()
     int total;
     cin >> total;
 
-    cout << "Enter the number of drawn balls:";
+    cout << "Enter the number of drawn balls: ";
     int drawn;
     cin >> drawn;
 
