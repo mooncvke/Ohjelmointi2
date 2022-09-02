@@ -11,13 +11,12 @@ unsigned long int factorial( int amount) {
         --amount;
         ++num;
     }
-    cout << result << endl;
     return result;
 }
 
-unsigned long int probability (unsigned long int total, unsigned long int drawn ) {
+unsigned long int probability (int total, int drawn ) {
     unsigned long int n = factorial(total);
-    unsigned long int n_p = total - drawn;
+    int n_p = total - drawn;
     unsigned long int minus = factorial(n_p);
     unsigned long int p = factorial(drawn);
     unsigned long int result = (n / (minus * p));
@@ -29,15 +28,13 @@ unsigned long int probability (unsigned long int total, unsigned long int drawn 
 int main()
 {
     cout << "Enter the total number of lottery balls: ";
-    unsigned long int total;
+    int total;
     cin >> total;
 
     cout << "Enter the number of drawn balls:";
-    unsigned long int drawn;
+    int drawn;
     cin >> drawn;
 
-
-/*
     if (total < 1) {
         cout << "The number of balls must be positive number." << endl;
 
@@ -45,10 +42,12 @@ int main()
         cout << "The number of balls must be positive number." << endl;
 
 
+    } else {
+
+
+    unsigned long int prob = probability(total, drawn);
+
+    cout << "The probability of guessing all " << drawn << " balls correctly is 1/"<< prob << endl;
     }
-*/
-
-
-    cout << "The probability of guessing all " << drawn << " balls correctly is 1/"<< probability(total, drawn) << endl;
 
 }
