@@ -23,20 +23,28 @@ int main()
     }
 
     string alphabet = "";
-    for ( char letter = 'a'; letter <= 'z'; ++letter) {
-        alphabet += letter;
-    }
-
-    cout << alphabet << endl;
-
-    if (key != alphabet ) {
-        cout << "Error! The encryption key must contain all alphabets a-z." << endl;
-        return 0;
+    for ( char letter = 'a'; letter <= 'z'; letter++) {
+        if(key.find(letter)<key.length()) {
+        } else {
+            cout << "Error! The encryption key must contain all alphabets a-z." << endl;
+            return 0;
+        }
     }
 
 
-
-    cout << "Enter the text to be encrypted: " << endl;
+    cout << "Enter the text to be encrypted: ";
     string text;
     cin >> text;
+
+
+    string encrypted ="";
+    int a_value = static_cast< int >('a');
+    for ( int i = 0; i <= text.length(); i++) {
+        int value = static_cast< int >(text[i]);
+        encrypted += key[value-a_value];
+    }
+
+    cout << "Encrypted text: " << encrypted << endl;
+
+
 }
