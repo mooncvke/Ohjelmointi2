@@ -39,7 +39,8 @@ int main()
 
     string encrypted ="";
     int a_value = static_cast< int >('a');
-    for ( int i = 0; i <= text.length(); i++) {
+    int text_length = text.length();
+    for ( int i = 0; i <= text_length; i++) {
         int value = static_cast< int >(text[i]);
         encrypted += key[value-a_value];
     }
