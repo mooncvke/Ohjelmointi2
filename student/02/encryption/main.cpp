@@ -36,20 +36,24 @@ int main()
     string text;
     cin >> text;
 
-    for ( int i = 0; i < length; i++ ) {
-        if ( islower(key[i]) == false ) {
+    int text_length = text.length();
+
+    for ( int i = 0; i < text_length; i++ ) {
+        if ( islower(text[i]) == false ) {
             cout << "Error! The text to be encrypted must contain only lower case characters." << endl;
             return 1;
+        } else {
+            continue;
         }
     }
 
 
     string encrypted ="";
     int a_value = static_cast< int >('a');
-    int text_length = text.length();
+
     for ( int i = 0; i <= text_length; i++) {
         int value = static_cast< int >(text[i]);
-        encrypted += key[value-a_value];
+        encrypted += key[value - a_value];
     }
 
     cout << "Encrypted text: " << encrypted << endl;
