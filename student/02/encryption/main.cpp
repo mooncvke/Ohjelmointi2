@@ -10,7 +10,7 @@ int main()
 
     if ( key.length() < 26) {
         cout << "Error! The encryption key must contain 26 characters." << endl;
-        return 0;
+        return 1;
     }
 
     int length = key.length();
@@ -18,7 +18,7 @@ int main()
     for ( int i = 0; i < length; i++ ) {
         if ( islower(key[i]) == false ) {
             cout << "Error! The encryption key must contain only lower case characters" << endl;
-            return 0;
+            return 1;
         }
     }
 
@@ -27,7 +27,7 @@ int main()
         if(key.find(letter)<key.length()) {
         } else {
             cout << "Error! The encryption key must contain all alphabets a-z." << endl;
-            return 0;
+            return 1;
         }
     }
 
@@ -35,6 +35,13 @@ int main()
     cout << "Enter the text to be encrypted: ";
     string text;
     cin >> text;
+
+    for ( int i = 0; i < length; i++ ) {
+        if ( islower(key[i]) == false ) {
+            cout << "Error! The text to be encrypted must contain only lower case characters." << endl;
+            return 1;
+        }
+    }
 
 
     string encrypted ="";
