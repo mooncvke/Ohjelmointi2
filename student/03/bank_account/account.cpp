@@ -29,20 +29,50 @@ void Account::generate_iban()
 }
 
 void Account::print() const {
+    std::cout << owner_ << " : " << iban_ << " : " << balance_ << " euros" << std::endl;
 
 }
 
 void Account::set_credit_limit(int amount) {
+    if ( has_credit_ == false) {
+        std::cout << "Cannot set credit limit: the account has no credit card" << std::endl;
+    } else {
+        credit_limit_ = amount;
+    }
 
 }
 
 void Account::save_money(int amount) {
-
+    balance_ += amount;
 }
 
-void Account::take_money(int amount) {
-
+bool Account::take_money(int amount) {
+    if ( !has_credit_) {
+        if (amount > balance_) {
+            std::cout << "Cannot take money: balance underflow" << std::endl;
+            return false;
+        } else {
+            balance_ -= amount;
+            std::cout << amount << " euros taken: new balance of " << iban_ <<" is " << balance_ << " euros" << std::endl;
+            return true;
+        }
+    } else if ( has_credit_) {
+        if (amount > balance_ + credit_limit_) {
+            std::cout << "Cannot take money: balance underflow" << std::endl;
+            return false;
+        } else {
+            balance_ -= amount;
+            std::cout << amount << " euros taken: new balance of " << iban_ <<" is " << balance_ << " euros" << std::endl;
+            return true;
+        }
+    }
 }
+
 void Account::transfer_to(Account owner, int amount) {
+    if (this->take_money(amount) == true) {
+        owner.balance_ += amount;
+    } else {
+        std::cout << "Transfer from " << iban_ << " failed" << std::endl;
+    }
 
 }

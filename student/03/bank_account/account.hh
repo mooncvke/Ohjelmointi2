@@ -13,7 +13,7 @@ public:
     void print() const;
     void set_credit_limit(int amount);
     void save_money(int amount);
-    void take_money(int amount);
+    bool take_money(int amount);
     void transfer_to(Account owner, int amount);
 
 
@@ -35,6 +35,8 @@ private:
     std::string owner_;
     bool has_credit_;
     std::string iban_;
+    int balance_= 0;
+    int credit_limit_;
 
 };
 
