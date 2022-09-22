@@ -42,7 +42,7 @@ void Account::set_credit_limit(int amount) {
 
 }
 
-void Account::save_money(int amount) {
+void Account::save_money(int const& amount) {
     balance_ += amount;
 }
 
@@ -69,11 +69,13 @@ bool Account::take_money(int amount) {
     return 0;
 }
 
-void Account::transfer_to(Account owner, int amount) {
-    if (this->take_money(amount) == true) {
-        owner.save_money(amount);
-    } else {
+void Account::transfer_to(Account &account, int amount) {
+
+    if (this->take_money(amount) == false) {
         std::cout << "Transfer from " << iban_ << " failed" << std::endl;
+
+    } else {
+        account.save_money(amount);
     }
 
 }

@@ -12,9 +12,9 @@ public:
     // More methods
     void print() const;
     void set_credit_limit(int amount);
-    void save_money(int amount);
+    void save_money(int const& amount);
     bool take_money(int amount);
-    void transfer_to(Account owner, int amount);
+    void transfer_to(Account &owner, int amount);
 
 
 
