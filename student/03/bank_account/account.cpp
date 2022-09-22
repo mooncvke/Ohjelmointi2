@@ -66,11 +66,12 @@ bool Account::take_money(int amount) {
             return true;
         }
     }
+    return 0;
 }
 
 void Account::transfer_to(Account owner, int amount) {
     if (this->take_money(amount) == true) {
-        owner.balance_ += amount;
+        owner.save_money(amount);
     } else {
         std::cout << "Transfer from " << iban_ << " failed" << std::endl;
     }
