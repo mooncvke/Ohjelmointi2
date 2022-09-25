@@ -12,11 +12,10 @@ Book::Book(string const &author, string const &book_name):
 
 void Book::print()
 {
-    cout << author_ << " : " << book_name_ << endl;
     if (available_ ) {
-        cout << " - available" << endl;
+        cout << author_ << " : " << book_name_ << "\n- available\n";
     } else {
-        cout << "- loaned: ";
+        cout << author_ << " : " << book_name_ << "\n- loaned: ";
         loan_date_.print();
         cout << "- to be returned: ";
         due_date_.print();
