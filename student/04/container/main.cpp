@@ -56,7 +56,6 @@ bool is_ordered_non_strict_ascending(std::vector< int >& ints) {
 bool is_arithmetic_series(std::vector< int >& ints) {
     int previous;
     previous = ints.at(0);
-    unsigned int value = 0;
     int diff;
     diff = ints.at(1) - ints.at(0);
 
