@@ -21,7 +21,7 @@ void Player::add_points(int points)
     points_ += points;
 
     if (points_ > 50) {
-        std::cout << name_ << " gets penalty points!" << std::endl;
+        cout << name_ << " gets penalty points!" << endl;
         points_ = 25;
     }
 
