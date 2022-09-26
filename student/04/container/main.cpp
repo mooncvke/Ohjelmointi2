@@ -36,101 +36,76 @@ bool same_values(std::vector< int >& ints) {
 }
 
 bool is_ordered_non_strict_ascending(std::vector< int >& ints) {
-    int previous;
-    int first = 0;
-    unsigned int value = 0;
 
-    for (int i : ints) {
-        if  ( first == 0) {
-            first += 1;
-            value += 1;
+    int previous;
+    previous = ints.at(0);
+
+    for(int i : ints) {
+        if (i >= previous) {
             previous = i;
-        } else {
-            if(i >= previous) {
-                value += 1;
-                previous = i;
-            } else {
-                previous = i;
-            }
+            continue;
+        } else if( i < previous) {
+            return false;
         }
     }
+    return true;
 
-    if (value == ints.size())  {
-        return true;
-    } else {
-        return false;
-    }
 
 }
 
 bool is_arithmetic_series(std::vector< int >& ints) {
     int previous;
-    int first = 0;
+    previous = ints.at(0);
     unsigned int value = 0;
     int diff;
-    int newdiff;
+    diff = ints.at(1) - ints.at(0);
 
     for (int i : ints) {
-        if ( first == 0) {
-            first += 1;
-            previous = i;
-        } if ( first == 1) {
-            first += 1;
-            diff = i - previous;
-            previous = i;
+        if ( i == previous) {
+            continue;
+        }
+        int r1;
+        r1 = i - previous;
+        previous  = i;
+        if ( r1 == diff) {
+            continue;
+
         } else {
-            newdiff = i - previous;
-            if (newdiff == diff) {
-                value += 1;
-                diff = newdiff;
-                previous = i;
-            } else {
-                diff = newdiff;
-                previous = i;
-            }
+            return false;
         }
     }
-
-    if (value == ints.size() - 2)  {
-        return true;
-    } else {
-        return false;
-    }
+    return true;
 }
 
 bool is_geometric_series(std::vector< int >& ints) {
-    int previous;
-    int first = 0;
-    unsigned int value = 0;
-    int div;
-    int newdiv;
+    int first_int;
+    first_int = ints.at(0);
 
-    for (int i : ints) {
-        if ( first == 0) {
-            first += 1;
-            previous = i;
-        } if ( first == 1) {
-            first += 1;
-            div = i / previous;
-            previous = i;
-        } else {
-            newdiv = i / previous;
-            if (newdiv == div) {
-                value += 1;
-                div = newdiv;
-                previous = i;
-            } else {
-                div = newdiv;
-                previous = i;
-            }
-        }
-    }
-
-    if (value == ints.size() - 2)  {
-        return true;
-    } else {
+    if ( first_int == 0) {
         return false;
     }
+
+    double ratio;
+    ratio = ints.at(1) / ints.at(0);
+
+
+    for ( int i : ints) {
+        if ( i == first_int ) {
+            continue;
+        }
+
+        double r1;
+        r1 = i / first_int;
+        first_int = i;
+
+        if ( r1 == ratio) {
+            continue;
+        } else {
+            return false;
+        }
+    }
+    return true;
+
 }
 
 int main()
