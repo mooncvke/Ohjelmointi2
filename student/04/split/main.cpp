@@ -5,6 +5,30 @@
 
 // TODO: Implement split function here
 // Do not change main function
+using split_string = std::vector<std::string>;
+
+split_string split(const std::string &line, const char sep, bool value = false) {
+
+    split_string parts = {};
+    std::string word = "";
+
+    // go through the line
+    for ( char c : line) {
+        if (c == sep) {
+            if (!(word.empty() && value)) {
+               parts.push_back(word);
+            }
+            word.clear();
+
+            } else {
+                word += c;
+            }
+
+    }
+
+    parts.push_back(word);
+    return parts;
+}
 
 
 int main()
