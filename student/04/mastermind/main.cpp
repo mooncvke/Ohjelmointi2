@@ -31,33 +31,34 @@ B = Blue, R = Red, Y = Yellow, G = Green, O = Orange, V = Violet";
 // and fills the color series in the user-desired way.
 // Repeats the question until the user enters either R or L.
 
-string get_correct_colors(int seed, string correct_colors) {
+vector<char> get_correct_colors(int seed, vector<char> correct_colors) {
     default_random_engine gen(seed);
     uniform_int_distribution<int> distr(1, 6);
-    string letter = "";
+    char letter;
     int i = 0;
     while( i < 4) {
         if ( distr(gen) == 1 ) {
-           letter = "B";
+           letter = 'B';
         }if ( distr(gen) == 2 ) {
-            letter = "R";
+            letter = 'R';
         }if ( distr(gen) == 3 ) {
-            letter = "Y";
+            letter = 'Y';
         }if ( distr(gen) == 4 ) {
-            letter = "G";
+            letter = 'G';
         }if ( distr(gen) == 5 ) {
-            letter = "O";
+            letter = 'O';
         }if ( distr(gen) == 6 ) {
-            letter = "V";
+            letter = 'V';
         }
-        correct_colors += letter;
+        correct_colors.push_back(letter);
         i += 1;
     }
+
 
     return correct_colors;
 }
 
-void get_input(string correct_colors)
+vector<char> get_input(vector<char> correct_colors)
 {
     cout << "Enter an input way (R = random, L = list): ";
     string input_str = "";
@@ -70,6 +71,7 @@ void get_input(string correct_colors)
 
         correct_colors = get_correct_colors(seed, correct_colors);
 
+
     }
     else if(input_str == "L" or input_str == "l")
     {
@@ -79,9 +81,9 @@ void get_input(string correct_colors)
             cout << "Enter four colors (four letters without spaces): ";
             string colors = "";
             cin >> colors;
-            // TODO:Fill color series based on the given string and check if
-            // the user gave the correct amount of allowed colors
-            // TODO: Update the boolean variable called accepted
+
+
+
         }
     }
     else
@@ -92,6 +94,7 @@ void get_input(string correct_colors)
         // but instead you can enclose the above code inside a loop structure.
         get_input(correct_colors);
     }
+        return correct_colors;
 }
 
 
@@ -108,12 +111,23 @@ void print_line_with_char(char c, unsigned int line_length)
 
 // Prints all color series.
 // (Not called in the template code.)
-void print_all(/* a vector including color series */)
+void print_all(vector< vector < char> > all_guesses, vector < vector <int >> amount_guessed)
 {
+    cout << "here printing" << endl;
     print_line_with_char('=', 2 * (SIZE + SUFFIX_LENGTH_IN_PRINT) + 1);
-    //for(/* go through the vector */)
-    {
-        // TODO: print each vector element (color series)
+
+    int i = 0;
+    cout << "| ";
+    for ( vector< char > one_guesses : all_guesses) {
+        for ( char color : one_guesses) {
+            cout << color << " ";
+        }
+        cout << "|";
+        for ( int guessed_correct : amount_guessed.at(i) ) {
+            cout << " " << guessed_correct << " |";
+        }
+        cout << endl;
+        i += 1;
     }
     print_line_with_char('=', 2 * (SIZE + SUFFIX_LENGTH_IN_PRINT) + 1);
 }
@@ -123,30 +137,40 @@ void print_all(/* a vector including color series */)
 // On each round, all rows given so far are printed.
 int main()
 {
-    string correct_colors = "";
+    vector<char> correct_colors;
     cout << INFO_TEXT << endl;
     print_line_with_char('*', INFO_TEXT.size());
 
-    get_input(correct_colors);
+    // get the row of the correct colors
+    correct_colors = get_input(correct_colors);
 
-    vector< vector < string > > all_guesses;
+
+    vector< vector < char> >  all_guesses;
     Guess guess(all_guesses);
+
+    vector < vector <int >> amount_guessed;
+    vector < int > one_guessed;
 
     bool can_guess = true;
 
     while(can_guess == true) {
-        guess.get_input();
 
+        all_guesses = guess.get_input(correct_colors, amount_guessed);
+        if(all_guesses.back().empty() ) {
+            continue;
+        }
 
-        vector<vector<string>>::size_type guess_amount = all_guesses.size();
-        if ( guess_amount > GUESS_MAX) {
+        print_all(all_guesses, amount_guessed);
+
+        vector<vector<char>>::size_type guess_amount;
+        guess_amount = all_guesses.size();
+        cout <<"guess amount: " << guess_amount << endl;
+
+        if ( guess_amount >= GUESS_MAX) {
             can_guess = false;
-}
+        }
     }
 
-
-    // TODO: Play the game, i.e. repeatedly read a user given number series
-    // and compare it with the secret one
 
     return 0;
 }
