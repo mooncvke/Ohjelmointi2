@@ -82,7 +82,22 @@ vector<char> get_input(vector<char> correct_colors)
             string colors = "";
             cin >> colors;
 
+            //check if okay
+            for (char color : colors) {
+                if ( !isupper(color)) {
+                    cout << "Wrong size" << endl;
+                    break;
+                } if ( !( color == 'B' || color == 'R' || color == 'Y' || color == 'G' || color == 'O' || color == 'V')) {
+                    cout << "Unknown color" << endl;
+                    break;
+                } else {
+                accepted = true;
+                }
+            }
 
+            for( char color : colors) {
+                correct_colors.push_back(color);
+            }
 
         }
     }
@@ -153,22 +168,26 @@ int main()
 
     bool can_guess = true;
 
-    while(can_guess == true) {
+    while(can_guess) {
 
         all_guesses = guess.get_input(correct_colors, amount_guessed);
-        if(all_guesses.back().empty() ) {
-            continue;
+
+        if(not all_guesses.back().empty() ) {
+            print_all(all_guesses, amount_guessed);
+
+            vector<vector<char>>::size_type guess_amount;
+            guess_amount = all_guesses.size();
+            cout <<"guess amount: " << guess_amount << endl;
+
+            if ( guess_amount >= GUESS_MAX) {
+                can_guess = false;
+            }
+
+        } else {
+            can_guess = true;
         }
 
-        print_all(all_guesses, amount_guessed);
 
-        vector<vector<char>>::size_type guess_amount;
-        guess_amount = all_guesses.size();
-        cout <<"guess amount: " << guess_amount << endl;
-
-        if ( guess_amount >= GUESS_MAX) {
-            can_guess = false;
-        }
     }
 
 
