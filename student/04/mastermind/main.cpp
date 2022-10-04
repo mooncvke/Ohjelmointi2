@@ -69,7 +69,6 @@ void get_input(string correct_colors)
         cin >> seed;
 
         correct_colors = get_correct_colors(seed, correct_colors);
-        cout << correct_colors << endl;
 
     }
     else if(input_str == "L" or input_str == "l")
@@ -94,7 +93,6 @@ void get_input(string correct_colors)
         get_input(correct_colors);
     }
 }
-
 
 
 // Prints a line consisting of the given character c.
@@ -129,8 +127,23 @@ int main()
     cout << INFO_TEXT << endl;
     print_line_with_char('*', INFO_TEXT.size());
 
-    // TODO: Declare an object for a color series (the secret one)
     get_input(correct_colors);
+
+    vector< vector < string > > all_guesses;
+    Guess guess(all_guesses);
+
+    bool can_guess = true;
+
+    while(can_guess == true) {
+        guess.get_input();
+
+
+        vector<vector<string>>::size_type guess_amount = all_guesses.size();
+        if ( guess_amount > GUESS_MAX) {
+            can_guess = false;
+}
+    }
+
 
     // TODO: Play the game, i.e. repeatedly read a user given number series
     // and compare it with the secret one

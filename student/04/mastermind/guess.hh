@@ -5,16 +5,20 @@
 #include <iostream>
 
 class Guess;
-using colors = std::vector< std::vector < Guess > >;
+using guess_vector = std::vector< std::vector < std::string > >;
 
 
 
 class Guess
 {
 public:
-    Guess(colors);
+    Guess(guess_vector& guesses);
 
-    colors give_colors(int seed);
+    guess_vector get_input();
+
+private:
+    guess_vector guesses_;
+
 };
 
 #endif // GUESS_H
