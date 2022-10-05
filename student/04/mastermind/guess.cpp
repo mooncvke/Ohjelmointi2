@@ -27,6 +27,7 @@ guess_vector Guess::get_input(std::vector<char>& correct_colors, std::vector< st
         guesses_.push_back(colors);
 
         return guesses_;
+        // mitä tekee jos is_ok onkin false
     }
     return guesses_;
 
@@ -34,12 +35,13 @@ guess_vector Guess::get_input(std::vector<char>& correct_colors, std::vector< st
 
 guess_amount_vector Guess::check_if_correct(std::vector<char>& colors, std::vector<char>& correct_colors, std::vector < std::vector <int >>& amount_guessed)
 {
-    std::cout << "here in guess.ccp " << std::endl;
 
     int i = 0;
     int guessed_correctly = 0;
     int guessed_color_correctly = 0;
     std::vector < int > one_guessed;
+
+    std::vector <int> used_colors;
 
     for( char color : colors ) {
 
@@ -49,8 +51,12 @@ guess_amount_vector Guess::check_if_correct(std::vector<char>& colors, std::vect
             guessed_correctly += 1;
         } else {
             //check if guessed color correctly
-            int amount = check_if_correct_color(correct_colors, color, guessed_color_correctly, i);
-            guessed_color_correctly = amount;
+            if (std::find(used_colors.begin(), used_colors.end(), color) == used_colors.end()) {
+                int amount = check_if_correct_color(correct_colors, color, guessed_color_correctly, i);
+                guessed_color_correctly = amount;
+                used_colors.push_back(color);
+            }
+
         }
         ++i;
     }
@@ -64,29 +70,24 @@ guess_amount_vector Guess::check_if_correct(std::vector<char>& colors, std::vect
 
 int Guess::check_if_correct_color(std::vector<char>& correct_colors, char guessed_color, int guessed_color_correctly, int i)
 {
-    std::cout << "checking if correct color " << std::endl;
+    for(char color : correct_colors) { // katotaan onko color arvatuissa eli guessed_color
 
-    for(char color : correct_colors) {
-        if ( color == guessed_color) {
+        if ( color == guessed_color) { // arvattu väri sama kuin yksi oikeasta värisarjasta
             if( guessed_color == correct_colors.at(i)) {
                 // if guessed color and place correctly
             } else { // puuttuu tarkastelu jos sitä väriä onkin useampia
                 // if guessed only color correctly
                 guessed_color_correctly += 1;
-            }
+        }
         }
     }
-
     return guessed_color_correctly;
 }
 
 bool Guess::check_if_ok(std::vector<char> &colors)
 {
     for( char color : colors ) {
-        if ( !isupper(color)   ) {
-            std::cout << "Wrong size" << std::endl;
-            return false;
-        }if (!( color == 'B' || color == 'R' || color == 'Y' || color == 'G' || color == 'O' || color == 'V')) {
+        if (!( color == 'B' || color == 'R' || color == 'Y' || color == 'G' || color == 'O' || color == 'V')) {
             std::cout << "Unknown color" << std::endl;
             return false;
         }

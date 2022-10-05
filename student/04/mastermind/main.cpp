@@ -54,7 +54,6 @@ vector<char> get_correct_colors(int seed, vector<char> correct_colors) {
         i += 1;
     }
 
-
     return correct_colors;
 }
 
@@ -82,22 +81,27 @@ vector<char> get_input(vector<char> correct_colors)
             string colors = "";
             cin >> colors;
 
-            //check if okay
-            for (char color : colors) {
-                if ( !isupper(color)) {
-                    cout << "Wrong size" << endl;
-                    break;
-                } if ( !( color == 'B' || color == 'R' || color == 'Y' || color == 'G' || color == 'O' || color == 'V')) {
-                    cout << "Unknown color" << endl;
-                    break;
-                } else {
+            if ( colors == "q" || colors == "Q") {
                 accepted = true;
+                continue;
+            } else {
+                //check if okay
+                for (char color : colors) {
+                    if ( !isupper(color)) {
+                        cout << "Wrong size" << endl;
+                        break;
+                    } if ( !( color == 'B' || color == 'R' || color == 'Y' || color == 'G' || color == 'O' || color == 'V')) {
+                        cout << "Unknown color" << endl;
+                        break;
+                    } else {
+                    accepted = true;
+                    }
                 }
-            }
 
-            for( char color : colors) {
-                correct_colors.push_back(color);
-            }
+                for( char color : colors) {
+                    correct_colors.push_back(color);
+                }
+        }
 
         }
     }
@@ -128,7 +132,6 @@ void print_line_with_char(char c, unsigned int line_length)
 // (Not called in the template code.)
 void print_all(vector< vector < char> > all_guesses, vector < vector <int >> amount_guessed)
 {
-    cout << "here printing" << endl;
     print_line_with_char('=', 2 * (SIZE + SUFFIX_LENGTH_IN_PRINT) + 1);
 
     int i = 0;
@@ -147,9 +150,7 @@ void print_all(vector< vector < char> > all_guesses, vector < vector <int >> amo
     print_line_with_char('=', 2 * (SIZE + SUFFIX_LENGTH_IN_PRINT) + 1);
 }
 
-// Implements the actual game loop, where user-given guesses are read
-// and compared to the secret row.
-// On each round, all rows given so far are printed.
+
 int main()
 {
     vector<char> correct_colors;
@@ -159,12 +160,16 @@ int main()
     // get the row of the correct colors
     correct_colors = get_input(correct_colors);
 
+    if ( correct_colors.empty()) {
+        return 0;
+    }
+
 
     vector< vector < char> >  all_guesses;
     Guess guess(all_guesses);
 
     vector < vector <int >> amount_guessed;
-    vector < int > one_guessed;
+
 
     bool can_guess = true;
 
@@ -177,9 +182,12 @@ int main()
 
             vector<vector<char>>::size_type guess_amount;
             guess_amount = all_guesses.size();
-            cout <<"guess amount: " << guess_amount << endl;
 
             if ( guess_amount >= GUESS_MAX) {
+                cout << "You lost: Maximum number of guesses done" << endl;
+                can_guess = false;
+            } if (amount_guessed.back().at(0) == 4) {
+                cout << "You won: Congratulations!" << endl;
                 can_guess = false;
             }
 
