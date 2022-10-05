@@ -168,7 +168,7 @@ void print_line_with_char(char c, unsigned int line_length)
 }
 
 // Prints all color series.
-void print_all(const vector< vector < char> > all_guesses, vector < vector <int >> amount_guessed)
+void print_all(const vector< vector < char> >& all_guesses, vector < vector <int >> amount_guessed)
 {   // use print_line_with_char function to print line before guessed colors
     print_line_with_char('=', 2 * (SIZE + SUFFIX_LENGTH_IN_PRINT) + 1);
 
