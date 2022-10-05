@@ -57,16 +57,14 @@ const string INFO_TEXT = "Colors in use: \
 B = Blue, R = Red, Y = Yellow, G = Green, O = Orange, V = Violet";
 
 
-// Reads the input way, either random or listing way,
-// and fills the color series in the user-desired way.
-// Repeats the question until the user enters either R or L.
-
+// get random correct colors
 vector<char> get_correct_colors(int seed, vector<char> correct_colors) {
-
+    // get random colors using seed number asked from user
     default_random_engine gen(seed);
     uniform_int_distribution<int> distr(1, 6);
     char letter;
     int i = 0;
+    // function gives random number from 1 to 6, based this number is given a color
     while( i < 4) {
         if ( distr(gen) == 1 ) {
            letter = 'B';
@@ -81,10 +79,11 @@ vector<char> get_correct_colors(int seed, vector<char> correct_colors) {
         }if ( distr(gen) == 6 ) {
             letter = 'V';
         }
+        // colors is put in correct_colors vector
         correct_colors.push_back(letter);
         i += 1;
     }
-
+    // function returns correct colors
     return correct_colors;
 }
 
@@ -169,13 +168,13 @@ void print_line_with_char(char c, unsigned int line_length)
 }
 
 // Prints all color series.
-void print_all(vector< vector < char> > all_guesses, vector < vector <int >> amount_guessed)
+void print_all(const vector< vector < char> > all_guesses, vector < vector <int >> amount_guessed)
 {   // use print_line_with_char function to print line before guessed colors
     print_line_with_char('=', 2 * (SIZE + SUFFIX_LENGTH_IN_PRINT) + 1);
 
     int i = 0;
     // go throug vector include all he guesses and print the guesses
-    for ( vector< char > one_guesses : all_guesses) {
+    for (vector<char> one_guesses : all_guesses) {
             cout << "| ";
         for ( char color : one_guesses) {
             color = toupper(color);
