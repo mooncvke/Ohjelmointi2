@@ -24,7 +24,7 @@
  *
  * Program author
  * Name: Tuuli Silvennoinen
- * Student number: 15018558
+ * Student number: 150185558
  * UserID: kftusi
  * E-Mail: tuuli.silvennoinen@tuni.fi
  *
