@@ -10,6 +10,7 @@ guess_vector Guess::get_input(std::vector<char>& correct_colors, std::vector< st
 {
 
     std::vector<char> colors;
+    std::vector<std::vector<char>> empty_colors;
     std::string answer;
     std::cout << "ROW: ";
     std::cin >> answer;
@@ -18,6 +19,7 @@ guess_vector Guess::get_input(std::vector<char>& correct_colors, std::vector< st
     for (char i : answer ) {
         colors.push_back(i);
     }
+
     bool is_ok;
     is_ok = check_if_ok(colors);
 
@@ -28,9 +30,9 @@ guess_vector Guess::get_input(std::vector<char>& correct_colors, std::vector< st
 
         return guesses_;
         // mitä tekee jos is_ok onkin false
+    } else{
+        return empty_colors;
     }
-    return guesses_;
-
 }
 
 guess_amount_vector Guess::check_if_correct(std::vector<char>& colors, std::vector<char>& correct_colors, std::vector < std::vector <int >>& amount_guessed)
@@ -86,9 +88,17 @@ int Guess::check_if_correct_color(std::vector<char>& correct_colors, char guesse
 
 bool Guess::check_if_ok(std::vector<char> &colors)
 {
+
+    std::vector<char>::size_type length = 0;
+    length = colors.size();
+
     for( char color : colors ) {
+        color = toupper(color);
         if (!( color == 'B' || color == 'R' || color == 'Y' || color == 'G' || color == 'O' || color == 'V')) {
             std::cout << "Unknown color" << std::endl;
+            return false;
+        }if ( length != 4) {
+            std::cout << "Wrong size" << std::endl;
             return false;
         }
     }

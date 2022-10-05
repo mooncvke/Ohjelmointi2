@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <random>
+#include <string>
 
 using namespace std;
 
@@ -81,13 +82,24 @@ vector<char> get_input(vector<char> correct_colors)
             string colors = "";
             cin >> colors;
 
+            string::size_type length = 0;
+            length = colors.length();
+
+
+
             if ( colors == "q" || colors == "Q") {
                 accepted = true;
                 continue;
             } else {
                 //check if okay
                 for (char color : colors) {
-                    if ( !( color == 'B' || color == 'R' || color == 'Y' || color == 'G' || color == 'O' || color == 'V')) {
+                    color = toupper(color);
+
+
+                    if ( length != 4) {
+                        cout << "Wrong size" << endl;
+                        break;
+                    } if ( !( color == 'B' || color == 'R' || color == 'Y' || color == 'G' || color == 'O' || color == 'V')) {
                         cout << "Unknown color" << endl;
                         break;
                     } else {
@@ -98,7 +110,7 @@ vector<char> get_input(vector<char> correct_colors)
                 for( char color : colors) {
                     correct_colors.push_back(color);
                 }
-        }
+            }
 
         }
     }
@@ -135,6 +147,7 @@ void print_all(vector< vector < char> > all_guesses, vector < vector <int >> amo
     cout << "| ";
     for ( vector< char > one_guesses : all_guesses) {
         for ( char color : one_guesses) {
+            color = toupper(color);
             cout << color << " ";
         }
         cout << "|";
@@ -161,7 +174,6 @@ int main()
         return 0;
     }
 
-
     vector< vector < char> >  all_guesses;
     Guess guess(all_guesses);
 
@@ -174,7 +186,7 @@ int main()
 
         all_guesses = guess.get_input(correct_colors, amount_guessed);
 
-        if(not all_guesses.back().empty() ) {
+        if(not all_guesses.empty() ) {
             print_all(all_guesses, amount_guessed);
 
             vector<vector<char>>::size_type guess_amount;
@@ -188,13 +200,9 @@ int main()
                 can_guess = false;
             }
 
-        } else {
-            can_guess = true;
         }
 
-
     }
-
 
     return 0;
 }
