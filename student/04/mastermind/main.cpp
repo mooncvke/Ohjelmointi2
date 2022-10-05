@@ -206,7 +206,7 @@ int main()
                 can_guess = false;
             }
 
-        } if(guess_amount != i +1 ) {
+        } else {
             i -= 1;
         }
         ++i;

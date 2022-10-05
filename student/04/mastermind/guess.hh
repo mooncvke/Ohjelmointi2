@@ -23,8 +23,6 @@ public:
 
 private:
     guess_vector& guesses_;
-    guess_amount_vector guess_amount_;
-
 
 };
 

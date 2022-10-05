@@ -1,8 +1,7 @@
 #include "guess.hh"
 
 Guess::Guess(guess_vector& guesses):
-    guesses_(guesses), guess_amount_()
-{
+    guesses_(guesses){
 
 }
 
@@ -40,7 +39,7 @@ guess_amount_vector Guess::check_if_correct(std::vector<char>& colors, std::vect
     int guessed_color_correctly = 0;
     std::vector < int > one_guessed;
 
-    std::vector <int> used_colors;
+    std::vector <char> used_colors;
 
     for( char color : colors ) {
 
