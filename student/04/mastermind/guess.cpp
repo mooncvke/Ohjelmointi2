@@ -29,8 +29,7 @@ guess_vector Guess::get_input(std::vector<char>& correct_colors, std::vector< st
         guesses_.push_back(colors);
 
         return guesses_;
-        // mitä tekee jos is_ok onkin false
-    } else{
+    } else {
         return empty_colors;
     }
 }

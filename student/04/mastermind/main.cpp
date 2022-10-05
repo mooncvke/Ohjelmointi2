@@ -144,8 +144,10 @@ void print_all(vector< vector < char> > all_guesses, vector < vector <int >> amo
     print_line_with_char('=', 2 * (SIZE + SUFFIX_LENGTH_IN_PRINT) + 1);
 
     int i = 0;
-    cout << "| ";
+
+
     for ( vector< char > one_guesses : all_guesses) {
+            cout << "| ";
         for ( char color : one_guesses) {
             color = toupper(color);
             cout << color << " ";
