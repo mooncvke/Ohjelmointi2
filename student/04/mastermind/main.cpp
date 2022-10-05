@@ -183,12 +183,16 @@ int main()
 
 
     bool can_guess = true;
+    unsigned long int i = 0;
 
     while(can_guess) {
 
         all_guesses = guess.get_input(correct_colors, amount_guessed);
 
-        if(not all_guesses.empty() ) {
+        vector<vector<char>>::size_type guess_amount;
+        guess_amount = all_guesses.size();
+
+        if(guess_amount == i +1 ) {
             print_all(all_guesses, amount_guessed);
 
             vector<vector<char>>::size_type guess_amount;
@@ -202,8 +206,10 @@ int main()
                 can_guess = false;
             }
 
+        } if(guess_amount != i +1 ) {
+            i -= 1;
         }
-
+        ++i;
     }
 
     return 0;

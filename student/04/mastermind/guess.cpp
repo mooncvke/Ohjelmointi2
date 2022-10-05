@@ -28,10 +28,8 @@ guess_vector Guess::get_input(std::vector<char>& correct_colors, std::vector< st
 
         guesses_.push_back(colors);
 
-        return guesses_;
-    } else {
-        return empty_colors;
     }
+    return guesses_;
 }
 
 guess_amount_vector Guess::check_if_correct(std::vector<char>& colors, std::vector<char>& correct_colors, std::vector < std::vector <int >>& amount_guessed)
@@ -76,10 +74,10 @@ int Guess::check_if_correct_color(std::vector<char>& correct_colors, char guesse
         if ( color == guessed_color) { // arvattu väri sama kuin yksi oikeasta värisarjasta
             if( guessed_color == correct_colors.at(i)) {
                 // if guessed color and place correctly
-            } else { // puuttuu tarkastelu jos sitä väriä onkin useampia
+            } else {
                 // if guessed only color correctly
                 guessed_color_correctly += 1;
-        }
+            }
         }
     }
     return guessed_color_correctly;
