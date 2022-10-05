@@ -87,10 +87,7 @@ vector<char> get_input(vector<char> correct_colors)
             } else {
                 //check if okay
                 for (char color : colors) {
-                    if ( !isupper(color)) {
-                        cout << "Wrong size" << endl;
-                        break;
-                    } if ( !( color == 'B' || color == 'R' || color == 'Y' || color == 'G' || color == 'O' || color == 'V')) {
+                    if ( !( color == 'B' || color == 'R' || color == 'Y' || color == 'G' || color == 'O' || color == 'V')) {
                         cout << "Unknown color" << endl;
                         break;
                     } else {
