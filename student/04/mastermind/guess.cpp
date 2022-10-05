@@ -11,7 +11,7 @@ guess_vector Guess::get_input(std::vector<char>& correct_colors, std::vector< st
 
     std::vector<char> colors;
     std::string answer;
-    std::cout << "ROW: ";
+    std::cout << "ROW> ";
     std::cin >> answer;
 
     // input is in string -> it is changed to vector

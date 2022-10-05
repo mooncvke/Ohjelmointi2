@@ -149,7 +149,7 @@ vector<char> get_input(vector<char> correct_colors)
         // Below the function itself is called recursively, which makes the
         // above code executed until an acceptable input_str is given,
         // but instead you can enclose the above code inside a loop structure.
-        get_input(correct_colors);
+        return get_input(correct_colors);
     }
     // function returns the correct_colors
     return correct_colors;
