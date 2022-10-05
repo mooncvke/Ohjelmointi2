@@ -9,8 +9,7 @@ class Guess;
 using guess_vector = std::vector< std::vector < char > >;
 using guess_amount_vector = std::vector< std::vector < int > >;
 
-
-
+// define class Guess and function used in it
 class Guess
 {
 public:
