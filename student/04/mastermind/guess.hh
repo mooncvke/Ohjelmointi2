@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
 class Guess;
 using guess_vector = std::vector< std::vector < char > >;
