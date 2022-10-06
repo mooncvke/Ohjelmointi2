@@ -41,7 +41,7 @@ guess_amount_vector Guess::check_if_correct(std::vector<char>& colors, std::vect
     int guessed_color_correctly = 0;
 
     std::vector < int > one_guessed;
-    std::vector <int> used_colors;
+    std::vector <char> used_colors;
 
     // go through colors guessed
     for( char color : colors ) {
@@ -51,10 +51,8 @@ guess_amount_vector Guess::check_if_correct(std::vector<char>& colors, std::vect
             guessed_correctly += 1;
 
             if (std::find(used_colors.begin(), used_colors.end(), color) != used_colors.end()) {
-                if ( guessed_color_correctly > 1) {
-                    guessed_color_correctly -= 1;
-
-
+                if ( guessed_color_correctly > 0) {
+                guessed_color_correctly -= 1;
             }
             used_colors.push_back(color);
         // didn't guess place and color correctly
@@ -66,8 +64,7 @@ guess_amount_vector Guess::check_if_correct(std::vector<char>& colors, std::vect
                 guessed_color_correctly = amount;
                 // add color to used colors
                 used_colors.push_back(color);
-            }
-            }
+           } }
         }
         ++i;
     }
