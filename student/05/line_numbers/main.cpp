@@ -18,6 +18,7 @@ int main()
     ifstream file(input_file);
     if ( not file ) {
         cout << "Error! The file " << input_file << " cannot be opened." << endl;
+        return 1;
     } else {
         ofstream oFile(output_file);
         int i = 0;
