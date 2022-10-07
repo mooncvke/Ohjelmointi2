@@ -12,6 +12,7 @@ int main()
     std::cout << "Enter some text. Quit by entering the word \"END\"." << std::endl;
     std::string word;
 
+
     while (std::cin >> word)
     {
         if (word == "END")
@@ -19,7 +20,13 @@ int main()
             return EXIT_SUCCESS;
         }
 
-        // TODO: implement your solution here
+        std::string::iterator first = word.begin();
+        std::string::iterator last = word.end();
+        ++first;
+        --last;
+
+        shuffle(first, last, generator);
+
 	
         std::cout << word << std::endl;
     }
