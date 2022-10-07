@@ -18,15 +18,14 @@ int main()
         if (word == "END")
         {
             return EXIT_SUCCESS;
+        } if (word.length() > 3) {
+            std::string::iterator first = word.begin();
+            std::string::iterator last = word.end();
+            ++first;
+            --last;
+
+            shuffle(first, last, generator);
         }
-
-        std::string::iterator first = word.begin();
-        std::string::iterator last = word.end();
-        ++first;
-        --last;
-
-        shuffle(first, last, generator);
-
 	
         std::cout << word << std::endl;
     }
