@@ -54,7 +54,8 @@ OBJECTS_DIR   = ./
 
 SOURCES       = main.cpp 
 OBJECTS       = main.o
-DIST          = /Users/tuuli/Qt/6.3.1/macos/mkspecs/features/spec_pre.prf \
+DIST          = test \
+		/Users/tuuli/Qt/6.3.1/macos/mkspecs/features/spec_pre.prf \
 		/Users/tuuli/Qt/6.3.1/macos/mkspecs/features/device_config.prf \
 		/Users/tuuli/Qt/6.3.1/macos/mkspecs/common/unix.conf \
 		/Users/tuuli/Qt/6.3.1/macos/mkspecs/common/mac.conf \
@@ -172,6 +173,7 @@ DIST          = /Users/tuuli/Qt/6.3.1/macos/mkspecs/features/spec_pre.prf \
 		/Users/tuuli/Qt/6.3.1/macos/mkspecs/features/qt_config.prf \
 		/Users/tuuli/Qt/6.3.1/macos/mkspecs/macx-clang/qmake.conf \
 		/Users/tuuli/Qt/6.3.1/macos/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		/Users/tuuli/Qt/6.3.1/macos/mkspecs/features/exclusive_builds.prf \
 		/Users/tuuli/Qt/6.3.1/macos/mkspecs/features/mac/sdk.prf \
 		/Users/tuuli/Qt/6.3.1/macos/mkspecs/features/toolchain.prf \
@@ -202,7 +204,7 @@ TARGET        = points
 EXPORT_QMAKE_MAC_SDK = macosx
 EXPORT_QMAKE_MAC_SDK_VERSION = 12.3
 EXPORT_QMAKE_XCODE_DEVELOPER_PATH = /Applications/Xcode.app/Contents/Developer
-EXPORT__QMAKE_STASH_ = 
+EXPORT__QMAKE_STASH_ = /Users/tuuli/ohjelmointi/ohj2/student/05/points/.qmake.stash
 EXPORT_VALID_ARCHS = x86_64 arm64
 EXPORT_DEFAULT_ARCHS = arm64
 EXPORT_ARCHS = $(filter $(EXPORT_VALID_ARCHS), $(if $(ARCHS), $(ARCHS), $(if $(EXPORT_DEFAULT_ARCHS), $(EXPORT_DEFAULT_ARCHS), $(EXPORT_VALID_ARCHS))))
@@ -335,6 +337,7 @@ Makefile: points.pro /Users/tuuli/Qt/6.3.1/macos/mkspecs/macx-clang/qmake.conf /
 		/Users/tuuli/Qt/6.3.1/macos/mkspecs/features/qt_config.prf \
 		/Users/tuuli/Qt/6.3.1/macos/mkspecs/macx-clang/qmake.conf \
 		/Users/tuuli/Qt/6.3.1/macos/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		/Users/tuuli/Qt/6.3.1/macos/mkspecs/features/exclusive_builds.prf \
 		/Users/tuuli/Qt/6.3.1/macos/mkspecs/features/mac/sdk.prf \
 		/Users/tuuli/Qt/6.3.1/macos/mkspecs/features/toolchain.prf \
@@ -476,6 +479,7 @@ Makefile: points.pro /Users/tuuli/Qt/6.3.1/macos/mkspecs/macx-clang/qmake.conf /
 /Users/tuuli/Qt/6.3.1/macos/mkspecs/features/qt_config.prf:
 /Users/tuuli/Qt/6.3.1/macos/mkspecs/macx-clang/qmake.conf:
 /Users/tuuli/Qt/6.3.1/macos/mkspecs/features/spec_post.prf:
+.qmake.stash:
 /Users/tuuli/Qt/6.3.1/macos/mkspecs/features/exclusive_builds.prf:
 /Users/tuuli/Qt/6.3.1/macos/mkspecs/features/mac/sdk.prf:
 /Users/tuuli/Qt/6.3.1/macos/mkspecs/features/toolchain.prf:
@@ -521,6 +525,7 @@ clean: compiler_clean
 
 distclean: clean 
 	-$(DEL_FILE) $(TARGET) 
+	-$(DEL_FILE) .qmake.stash
 	-$(DEL_FILE) Makefile
 
 

@@ -20,22 +20,26 @@ int main()
         string line;
         while ( getline(file, line))
         {
-            string name;
-            string personsPoints;
-            int point;
-
-            string::size_type index = 0;
-            index = line.find(':');
-
-            name = line.substr(0, index);
-            personsPoints = line.substr(index + 1);
-
-            point = stoi(personsPoints);
-
-            if ( points.find(name) != points.end()) {
-                points.at(name) = points.at(name) + point;
+            if (line.length() < 1) {
+                continue;
             } else {
-                points.insert( {name, point} );
+                string name;
+                string personsPoints;
+                int point;
+
+                string::size_type index = 0;
+                index = line.find(':');
+
+                name = line.substr(0, index);
+                personsPoints = line.substr(index + 1);
+
+                point = stoi(personsPoints);
+
+                if ( points.find(name) != points.end()) {
+                    points.at(name) = points.at(name) + point;
+                } else {
+                    points.insert( {name, point} );
+                }
             }
         }
         file.close();
