@@ -16,6 +16,7 @@ int main()
     ifstream file(inputFile);
     if ( not file ) {
         cout << "Error! The file " << inputFile << " cannot be opened." << endl;
+        return EXIT_FAILURE;
     } else {
         string line;
         while ( getline(file, line))
