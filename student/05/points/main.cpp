@@ -46,10 +46,10 @@ int main()
         file.close();
 
         cout << "Final scores: " << endl;
-        for (auto person : points) {
+        for (auto &person : points) {
             cout << person.first << ": " << person.second << endl;
         }
-
+        return EXIT_SUCCESS;
     }
 
     return 0;
