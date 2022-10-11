@@ -54,11 +54,18 @@ int main()
             ++row;
         }
         file.close();
-        for( auto word : words) {
+        for( auto &word : words) {
             cout << word.first << " " << word.second.size() << ": ";
+            int i = 0;
             for ( auto num : word.second) {
-                cout << num << ", " << endl;
+                if ( i == 0 ) {
+                    cout << num;
+                } else {
+                    cout << ", " << num;
+                }
+                ++i;
             }
+            cout << endl;
 
          }
 
