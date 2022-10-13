@@ -32,6 +32,12 @@ int sum_recursive(std::vector<int>& v){
 
 
     // Add your implementation here
+    if (v.size() <= 1) {
+        return v[0];
+    } else {
+        std::vector<int> slice(v.begin() + 1, v.begin()+v.size());
+        return v[0] + sum_recursive(slice);
+    }
 }
 
 // Do not modify rest of the code, or the automated testing won't work.
