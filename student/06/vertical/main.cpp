@@ -13,7 +13,33 @@ void print_vertical(unsigned int num)
 
 
     // Add your implementation here
+
+    string s = to_string(num);
+
+    cout << s.at(0) << endl;
+
+    if ( s.length() == 0) {
+        return;
+    } else {
+        s.erase(0,1);
+        if ( s.length() == 0) {
+            return;
+        } else {
+            if ( s.at(0) == '0') {
+                int number = stoi(s);
+                number = 0 + number;
+
+                return print_vertical(number);
+            } else {
+                int number = stoi(s);
+                return print_vertical(number);
+            }
+
+        }
+    }
+
 }
+
 
 // Do not modify rest of the code, or the automated testing won't work.
 #ifndef UNIT_TESTING
