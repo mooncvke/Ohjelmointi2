@@ -135,11 +135,18 @@ int get_input(GIGS &gigs){
     return EXIT_SUCCESS;
 }
 
+void artists( GIGS gigs)
+{
+    cout << "All artists in alphabetical order:" << endl;
+    for ( auto &artist : gigs) {
+        cout << artist.first << endl;
+    }
+}
+
 int main()
 {
     GIGS gigs;
     get_input(gigs);
-
 
     bool val = true;
     while (val) {
@@ -147,10 +154,37 @@ int main()
         string userInput;
         cin >> userInput;
 
+        string userInputUpper = "";
+
+        for ( char letter : userInput) {
+            letter = toupper(letter);
+            userInputUpper += letter;
+        }
+
         vector< string > input;
 
-        input = split(userInput, ' ' );
+        input = split(userInputUpper, ' ' );
 
+        if ( input.size() == 0 ) {
+            cout << "Error: Invalid input." << endl;
+            continue;
+        }
+        if ( input.at(0) == "QUIT" ) {
+            val = false;
+        }
+        if ( input.at(0) == "ARTISTS" ) {
+            artists(gigs);
+
+        }
+        if ( input.at(0) == "ARTIST" ) {
+
+        }
+        if ( input.at(0) == "STAGES" ) {
+
+        }
+        if ( input.at(0) == "STAGE" ) {
+
+        }
     }
 
     return EXIT_SUCCESS;
