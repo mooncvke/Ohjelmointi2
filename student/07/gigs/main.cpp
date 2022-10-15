@@ -140,5 +140,18 @@ int main()
     GIGS gigs;
     get_input(gigs);
 
+
+    bool val = true;
+    while (val) {
+        cout << "gigs> ";
+        string userInput;
+        cin >> userInput;
+
+        vector< string > input;
+
+        input = split(userInput, ' ' );
+
+    }
+
     return EXIT_SUCCESS;
 }
