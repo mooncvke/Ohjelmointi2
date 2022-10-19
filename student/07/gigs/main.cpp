@@ -26,10 +26,12 @@
 #include <iostream>
 #include <map>
 #include <fstream>
+#include <algorithm>
 
 using namespace std;
-
-using GIGS = map< string, vector< string >>;
+// map (avain artisti) jonka sisällä map ( avain keikkapäivä)
+// jonka hyötypari vector ( jossa kyseisen keikkapäivän keikkapaikkakunta sekä keikkapaikka)
+using GIGS = map< string, map < string, vector < string >>>;
 
 // Farthest year for which gigs can be allocated
 const std::string FARTHEST_POSSIBLE_YEAR = "2030";
@@ -115,20 +117,27 @@ int get_input(GIGS &gigs){
         while( getline(file, line) ) {
             vector<string> result;
             string artist;
+            string gigDate;
+            map < string, vector< string>> gigInfo;
 
             result = split(line);
             artist = result.at(0);
+            gigDate = result.at(1);
+
+            // remove first and second alkio from vector
             result.erase(result.begin());
+            result.erase(result.begin());
+
+            gigInfo.insert({gigDate, result});
 
             // can't find the artist from the gigs
             if ( gigs.find(artist) == gigs.end()){
                 // create a new
-                gigs.insert({artist, result});
+                gigs.insert({artist, gigInfo});
             } else {
-                gigs.at(artist) = result;
+                // did find the artist -> add new gig date to the artist
+                gigs.at(artist).insert({gigDate, result});
             }
-
-
         }
         file.close();
     }
@@ -143,47 +152,112 @@ void artists( GIGS gigs)
     }
 }
 
+void artist( GIGS gigs, string artist)
+{
+    cout << "Artist " << artist << " has the following gigs in the order they are listed: " << endl;
+
+    for ( auto &artistInfo : gigs.at(artist) ) {
+        cout << "- " << artistInfo.first << " : ";
+        int i = 0;
+        for ( auto &gigInfo : gigs.at(artist).at(artistInfo.first)) {
+            if ( i == 0) {
+                cout << gigInfo;
+            } else {
+                cout << ", "<< gigInfo;
+            }
+            ++i;
+        }
+        cout << endl;
+    }
+}
+
+void stages ( GIGS gigs)
+{
+    map < string, vector< string >> stages;
+
+
+    // go through gigs map
+    for (auto &i : gigs) {
+        // go through map inside gigs map
+        for (auto &j : i.second) {
+            vector < string > stage;
+            // town is not in map
+            if ( stages.find(j.second.at(0)) == stages.end()) {
+                stage.push_back(j.second.at(1));
+                stages.insert({j.second.at(0), stage});
+            } else {
+                // town is in the map
+                stage = stages.at(j.second.at(0));
+                // if stage ot in vector
+                if ( find(stage.begin(), stage.end(), j.second.at(1)) == stage.end()) {
+                    stage.push_back(j.second.at(1));
+                    // update the map
+                    stages.at(j.second.at(0)) = stage;
+                }
+            }
+
+        }
+    }
+    cout << "All gig places in alphabetical order:" << endl;
+
+    for (auto &town : stages) {
+        for ( auto &stage : town.second) {
+            cout << town.first << ", " << stage << endl;
+        }
+    }
+
+}
+
 int main()
 {
     GIGS gigs;
-    get_input(gigs);
+    int returnValue;
+    returnValue = get_input(gigs);
 
+    if( returnValue == EXIT_FAILURE) {
+        return EXIT_FAILURE;
+    }
+
+    // user interface
     bool val = true;
     while (val) {
+        string userInput = "";
         cout << "gigs> ";
-        string userInput;
-        cin >> userInput;
+        getline(cin, userInput);
 
-        string userInputUpper = "";
-
-        for ( char letter : userInput) {
-            letter = toupper(letter);
-            userInputUpper += letter;
-        }
-
+        // use split function to split userInput into vector
         vector< string > input;
+        input = split(userInput, ' ' );
 
-        input = split(userInputUpper, ' ' );
-
-        if ( input.size() == 0 ) {
-            cout << "Error: Invalid input." << endl;
-            continue;
-        }
-        if ( input.at(0) == "QUIT" ) {
+        // quit program
+        if ( input.at(0) == "QUIT" || input.at(0) == "quit" ) {
             val = false;
         }
-        if ( input.at(0) == "ARTISTS" ) {
+        // print all artists
+        else if ( input.at(0) == "ARTISTS" || input.at(0) == "artists" ) {
             artists(gigs);
+        }
+        // print gigs of one artist
+        // first check if input has enough parameters
+        else if ( input.at(0) == "ARTIST" || input.at(0) == "artist") {
+            if ( input.size() < 2 ) {
+                cout << input.at(0) << "Error: Invalid input." << endl;
+            } else if ( gigs.find(input.at(1)) == gigs.end() ) {
+                cout << "Error: Not found." << endl;
+            } else {
+                artist(gigs, input.at(1));
+            }
 
         }
-        if ( input.at(0) == "ARTIST" ) {
+        else if ( input.at(0) == "STAGES" ) {
+            stages(gigs);
 
         }
-        if ( input.at(0) == "STAGES" ) {
+        else if ( input.at(0) == "STAGE" ) {
 
-        }
-        if ( input.at(0) == "STAGE" ) {
-
+        } else {
+            cout << "last Error: Invalid input." << endl;
+            continue;
         }
     }
 
