@@ -195,7 +195,6 @@ void stages ( GIGS gigs)
                     stages.at(j.second.at(0)) = stage;
                 }
             }
-
         }
     }
     cout << "All gig places in alphabetical order:" << endl;
@@ -206,6 +205,27 @@ void stages ( GIGS gigs)
         }
     }
 
+}
+
+void stage(GIGS gigs, std::string stage)
+{
+    std::vector < string > artists;
+    // go through gigs map
+    for (auto &i : gigs) {
+        // go through map inside gigs map
+        for (auto &j : i.second) {
+
+            // town is not in map
+            if ( j.second.at(1) == stage) {
+                artists.push_back(i.first);
+            }
+        }
+    }
+
+    std::cout << "Stage " << stage << " has gigs of the following artists:" << std::endl;
+    for ( auto &artist : artists) {
+        std::cout << "- " << artist << std::endl;
+    }
 }
 
 int main()
@@ -221,9 +241,9 @@ int main()
     // user interface
     bool val = true;
     while (val) {
-        string userInput = "";
-        cout << "gigs> ";
-        getline(cin, userInput);
+        std::string userInput = "";
+        std::cout << "gigs> ";
+        getline(std::cin, userInput);
 
         // use split function to split userInput into vector
         vector< string > input;
@@ -241,7 +261,7 @@ int main()
         // first check if input has enough parameters
         else if ( input.at(0) == "ARTIST" || input.at(0) == "artist") {
             if ( input.size() < 2 ) {
-                cout << input.at(0) << "Error: Invalid input." << endl;
+                cout << "Error: Invalid input." << endl;
             } else if ( gigs.find(input.at(1)) == gigs.end() ) {
                 cout << "Error: Not found." << endl;
             } else {
@@ -249,14 +269,31 @@ int main()
             }
 
         }
-        else if ( input.at(0) == "STAGES" ) {
+        else if ( input.at(0) == "STAGES" || input.at(0) == "stages" ) {
             stages(gigs);
 
         }
-        else if ( input.at(0) == "STAGE" ) {
+        else if ( input.at(0) == "STAGE" || input.at(0) == "stage" ) {
+
+            // check if stage exists
+            std::string check = "notFound";
+            for( auto &i : gigs ) {
+                for ( auto &j : i.second) {
+                    if ( input.at(1) == j.second.at(1)) {
+                        check = "found";
+                    }
+                }
+            }
+            if ( input.size() < 2 ) {
+                std::cout << "Error: Invalid input." << std::endl;
+            } else if ( check == "notFound" ) {
+                std::cout << "Error: Not found." << std::endl;
+            } else {
+                stage(gigs, input.at(1));
+            }
 
         } else {
-            cout << "last Error: Invalid input." << endl;
+            std::cout << "Error: Invalid input." << std::endl;
             continue;
         }
     }
