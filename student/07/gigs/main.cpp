@@ -248,6 +248,23 @@ void addGig(GIGS &gigs, vector<string> input) {
     std::cout << "Gig added." << std::endl;
 }
 
+void cancel(GIGS &gigs, std::vector< string > input)
+{
+    std::string correctDate = "notTheDate";
+    GIGS gigsCopy = gigs;
+
+    for ( auto &date : gigsCopy.at(input.at(1))) {
+        if ( date.first >= input.at(2)) {
+            correctDate = "isTheDate";
+        }
+        if ( correctDate == "isTheDate") {
+            gigs.at(input.at(1)).erase(date.first);
+        }
+    }
+
+    std::cout << "Artist's gigs after the given date cancelled." << std::endl;
+
+}
 
 int main()
 {
@@ -321,26 +338,62 @@ int main()
                 stage(gigs, input.at(1));
             }
 
-        } else if ( input.at(0) =="ADD_ARTIST") {
+        }
+
+        else if ( input.at(0) =="ADD_ARTIST") {
             if ( input.size() < 2 ) {
                 cout << "Error: Invalid input." << endl;
             } else if (  gigs.find(input.at(1)) != gigs.end() ) {
                 std::cout << "Error: Alredy exists." << std::endl;
             } else {
                 addArtist(gigs, input.at(1));
+            } 
+
+        }
+        else if ( input.at(0) == "ADD_GIG") {
+
+            std::string exists = "doesntExist";
+            for ( auto &artist : gigs) {
+                for ( auto &date : artist.second) {
+                    if ( input.at(4) == date.second.at(1)) {
+                        if ( artist.first == input.at(2)) {
+                            exists = "alreadyExists";
+                        }
+                    }
+                }
             }
-        } else if ( input.at(0) == "ADD_GIG") {
+
             if ( input.size() < 5 ) {
                 std::cout << "Error: Invalid input." << std::endl;
             } else if ( gigs.find(input.at(1)) == gigs.end() ) {
                 std::cout << "Error: Not found." << std::endl;
             } else if(! is_valid_date(input.at(2))) {
                 std::cout << "Error: Invalid date." << std::endl;
+            } else if ( gigs.at(input.at(1)).find(input.at(2)) == gigs.at(input.at(1)).end() ) // date alredy taken
+            {
+                std::cout << "Error: Already exists." << std::endl;
+            } else if (exists == "alreadyExists") {
+                std::cout << "Error: Already exists." << std::endl;
             } else {
                 addGig(gigs, input);
             }
 
         } else if ( input.at(0) == "CANCEL") {
+            string check = "isNotGigs";
+            for ( auto &date : gigs.at(input.at(1))) {
+                if ( date.first >= input.at(2)) {
+                    check = "isGigs";
+                }
+            }
+
+            if ( input.size() < 3) {
+                std::cout << "Error: Invalid input." << std::endl;
+            } else if ( check == "isNotGigs" ) {
+                std::cout << "Error: No gigs after the given date." << std::endl;
+            }
+            else {
+                cancel(gigs, input);
+            }
 
         }
         else {
