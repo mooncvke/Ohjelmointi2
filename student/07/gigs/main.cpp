@@ -153,7 +153,7 @@ int get_input(GIGS &gigs){
     return EXIT_SUCCESS;
 }
 
-void artists( GIGS &gigs)
+void artists( GIGS gigs)
 {
     std::cout << "All artists in alphabetical order:" << std::endl;
     for ( auto &artist : gigs) {
@@ -216,7 +216,7 @@ void stages ( GIGS gigs)
 
 }
 
-void stage(GIGS &gigs, std::string stage)
+void stage(GIGS gigs, std::string stage)
 {
     std::vector < std::string > artists;
     // go through gigs map
@@ -271,7 +271,6 @@ void cancel(GIGS &gigs, std::vector< std::string > input)
             gigs.at(input.at(1)).erase(date.first);
         }
     }
-
     std::cout << "Artist's gigs after the given date cancelled." << std::endl;
 
 }
@@ -312,7 +311,6 @@ int main()
         // print all artists
         else if ( input.at(0) == "ARTISTS") {
             artists(gigs);
-            continue;
         }
         // print gigs of one artist
         // first check if input has enough parameters
@@ -324,16 +322,12 @@ int main()
             } else {
                 artist(gigs, input.at(1));
             }
-            continue;
 
         }
         else if ( input.at(0) == "STAGES") {
             stages(gigs);
-            continue;
-
         }
         else if ( input.at(0) == "STAGE") {
-
             // check if stage exists
             std::string check = "notFound";
             for( auto &i : gigs ) {
@@ -350,10 +344,7 @@ int main()
             } else {
                 stage(gigs, input.at(1));
             }
-            continue;
-
         }
-
         else if ( input.at(0) =="ADD_ARTIST") {
             if ( input.size() < 2 ) {
                 std::cout << "Error: Invalid input." << std::endl;
@@ -361,9 +352,7 @@ int main()
                 std::cout << "Error: Alredy exists." << std::endl;
             } else {
                 addArtist(gigs, input.at(1));
-            } 
-            continue;
-
+            }
         }
         else if ( input.at(0) == "ADD_GIG") {
 
@@ -392,7 +381,6 @@ int main()
             } else {
                 addGig(gigs, input);
             }
-            continue;
 
         } else if ( input.at(0) == "CANCEL") {
             std::string check = "isNotGigs";
@@ -410,7 +398,6 @@ int main()
             else {
                 cancel(gigs, input);
             }
-            continue;
 
         }
         else {
