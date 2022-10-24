@@ -312,6 +312,7 @@ int main()
         // print all artists
         else if ( input.at(0) == "ARTISTS") {
             artists(gigs);
+            continue;
         }
         // print gigs of one artist
         // first check if input has enough parameters
@@ -323,10 +324,12 @@ int main()
             } else {
                 artist(gigs, input.at(1));
             }
+            continue;
 
         }
         else if ( input.at(0) == "STAGES") {
             stages(gigs);
+            continue;
 
         }
         else if ( input.at(0) == "STAGE") {
@@ -347,6 +350,7 @@ int main()
             } else {
                 stage(gigs, input.at(1));
             }
+            continue;
 
         }
 
@@ -358,6 +362,7 @@ int main()
             } else {
                 addArtist(gigs, input.at(1));
             } 
+            continue;
 
         }
         else if ( input.at(0) == "ADD_GIG") {
@@ -377,7 +382,7 @@ int main()
                 std::cout << "Error: Invalid input." << std::endl;
             } else if ( gigs.find(input.at(1)) == gigs.end() ) {
                 std::cout << "Error: Not found." << std::endl;
-            } else if(! is_valid_date(input.at(2))) {
+            } else if(is_valid_date(input.at(2)) == false) {
                 std::cout << "Error: Invalid date." << std::endl;
             } else if ( gigs.at(input.at(1)).find(input.at(2)) == gigs.at(input.at(1)).end() ) // date alredy taken
             {
@@ -387,6 +392,7 @@ int main()
             } else {
                 addGig(gigs, input);
             }
+            continue;
 
         } else if ( input.at(0) == "CANCEL") {
             std::string check = "isNotGigs";
@@ -404,6 +410,7 @@ int main()
             else {
                 cancel(gigs, input);
             }
+            continue;
 
         }
         else {
