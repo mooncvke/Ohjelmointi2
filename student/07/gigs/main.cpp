@@ -28,9 +28,9 @@
 #include <fstream>
 #include <algorithm>
 
-using namespace std;
-// GIGS: artists, date, town, stage
-using GIGS = map< string, map < string, vector < string >>>;
+
+// GIGS: map<artists, map< date, vector< town, stage >>>
+using GIGS = std::map< std::string, std::map < std::string, std::vector < std::string >>>;
 
 // Farthest year for which gigs can be allocated
 const std::string FARTHEST_POSSIBLE_YEAR = "2030";
@@ -103,25 +103,35 @@ bool is_valid_date(const std::string& date_str)
 }
 
 int get_input(GIGS &gigs){
-    cout << "Give name for input file: ";
-    string inputFile;
-    getline(cin, inputFile);
+    std::cout << "Give name for input file: ";
+    std::string inputFile;
+    getline(std::cin, inputFile);
 
-    ifstream file(inputFile);
+    std::ifstream file(inputFile);
     if ( not file ) {
-        cout << "Error: File could not be read."<< endl;
+        std::cout << "Error: File could not be read."<< std::endl;
         return EXIT_FAILURE;
     } else {
-        string line;
+        std::string line;
         while( getline(file, line) ) {
-            vector<string> result;
-            string artist;
-            string gigDate;
-            map < string, vector< string>> gigInfo;
+            std::vector<std::string> result;
+            std::string artist;
+            std::string gigDate;
+            std::map < std::string, std::vector< std::string>> gigInfo;
 
             result = split(line);
             artist = result.at(0);
             gigDate = result.at(1);
+
+            // error checking
+            if (result.size() != 4){
+                std::cout << "Error invalid format in file." << std::endl;
+                return EXIT_FAILURE;
+            } else if (result.at(0) == "" || result.at(1) == "" || result.at(2) == "" || result.at(3) == "") {
+                std::cout << "Error invalid format in file." << std::endl;
+                return EXIT_FAILURE;
+            }
+
 
             // remove first and second alkio from vector
             result.erase(result.begin());
@@ -145,41 +155,41 @@ int get_input(GIGS &gigs){
 
 void artists( GIGS &gigs)
 {
-    cout << "All artists in alphabetical order:" << endl;
+    std::cout << "All artists in alphabetical order:" << std::endl;
     for ( auto &artist : gigs) {
-        cout << artist.first << endl;
+        std::cout << artist.first << std::endl;
     }
 }
 
-void artist( GIGS gigs, string artist)
+void artist( GIGS gigs, std::string artist)
 {
-    cout << "Artist " << artist << " has the following gigs in the order they are listed: " << endl;
+    std::cout << "Artist " << artist << " has the following gigs in the order they are listed: " << std::endl;
 
     for ( auto &artistInfo : gigs.at(artist) ) {
-        cout << "- " << artistInfo.first << " : ";
+        std::cout << "- " << artistInfo.first << " : ";
         int i = 0;
         for ( auto &gigInfo : gigs.at(artist).at(artistInfo.first)) {
             if ( i == 0) {
-                cout << gigInfo;
+                std::cout << gigInfo;
             } else {
-                cout << ", "<< gigInfo;
+                std::cout << ", "<< gigInfo;
             }
             ++i;
         }
-        cout << endl;
+        std::cout << std::endl;
     }
 }
 
 void stages ( GIGS gigs)
 {
-    map < string, vector< string >> stages;
+    std::map < std::string, std::vector< std::string >> stages;
 
 
     // go through gigs map
     for (auto &i : gigs) {
         // go through map inside gigs map
         for (auto &j : i.second) {
-            vector < string > stage;
+            std::vector < std::string > stage;
             // town is not in map
             if ( stages.find(j.second.at(0)) == stages.end()) {
                 stage.push_back(j.second.at(1));
@@ -196,11 +206,11 @@ void stages ( GIGS gigs)
             }
         }
     }
-    cout << "All gig places in alphabetical order:" << endl;
+    std::cout << "All gig places in alphabetical order:" << std::endl;
 
     for (auto &town : stages) {
         for ( auto &stage : town.second) {
-            cout << town.first << ", " << stage << endl;
+            std::cout << town.first << ", " << stage << std::endl;
         }
     }
 
@@ -208,7 +218,7 @@ void stages ( GIGS gigs)
 
 void stage(GIGS &gigs, std::string stage)
 {
-    std::vector < string > artists;
+    std::vector < std::string > artists;
     // go through gigs map
     for (auto &artist : gigs) {
         // go through map inside gigs map
@@ -227,18 +237,18 @@ void stage(GIGS &gigs, std::string stage)
     }
 }
 
-void addArtist(GIGS &gigs, string artist)
+void addArtist(GIGS &gigs, std::string artist)
 {
     // add artist to gigs with empty value
-    map< string, vector < string >> value;
+    std::map< std::string, std::vector < std::string >> value;
     gigs.insert({artist, value});
 }
 
-void addGig(GIGS &gigs, vector<string> input) {
+void addGig(GIGS &gigs, std::vector<std::string> input) {
     // vector: command, artist, date, town, stage
 
-    vector < string > stage;
-    map < string, vector< string>> info;
+    std::vector < std::string > stage;
+    std::map < std::string, std::vector< std::string>> info;
 
     stage.push_back(input.at(3));
     stage.push_back(input.at(4));
@@ -248,7 +258,7 @@ void addGig(GIGS &gigs, vector<string> input) {
     std::cout << "Gig added." << std::endl;
 }
 
-void cancel(GIGS &gigs, std::vector< string > input)
+void cancel(GIGS &gigs, std::vector< std::string > input)
 {
     std::string correctDate = "notTheDate";
     GIGS gigsCopy = gigs;
@@ -284,8 +294,8 @@ int main()
         getline(std::cin, userInput);
 
         // use split function to split userInput into vector
-        vector< string > input;
-        string userInputUpper = "";
+        std::vector< std::string > input;
+        std::string userInputUpper = "";
         input = split(userInput, ' ' );
 
         for ( char letter : input.at(0)) {
@@ -307,9 +317,9 @@ int main()
         // first check if input has enough parameters
         else if ( input.at(0) == "ARTIST") {
             if ( input.size() < 2 ) {
-                cout << "Error: Invalid input." << endl;
+                std::cout << "Error: Invalid input." << std::endl;
             } else if ( gigs.find(input.at(1)) == gigs.end() ) {
-                cout << "Error: Not found." << endl;
+                std::cout << "Error: Not found." << std::endl;
             } else {
                 artist(gigs, input.at(1));
             }
@@ -342,7 +352,7 @@ int main()
 
         else if ( input.at(0) =="ADD_ARTIST") {
             if ( input.size() < 2 ) {
-                cout << "Error: Invalid input." << endl;
+                std::cout << "Error: Invalid input." << std::endl;
             } else if (  gigs.find(input.at(1)) != gigs.end() ) {
                 std::cout << "Error: Alredy exists." << std::endl;
             } else {
@@ -379,7 +389,7 @@ int main()
             }
 
         } else if ( input.at(0) == "CANCEL") {
-            string check = "isNotGigs";
+            std::string check = "isNotGigs";
             for ( auto &date : gigs.at(input.at(1))) {
                 if ( date.first >= input.at(2)) {
                     check = "isGigs";
