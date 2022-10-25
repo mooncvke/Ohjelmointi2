@@ -364,6 +364,11 @@ int main()
             stages(gigs);
         }
         else if ( userInputUpper == "STAGE") {
+
+            if ( input.size() < 1 ) {
+                std::cout << "Error: Invalid input." << std::endl;
+                continue;
+            }
             // check if stage exists
             std::string check = "notFound";
             for( auto &i : gigs ) {
@@ -373,9 +378,7 @@ int main()
                     }
                 }
             }
-            if ( input.size() < 1 ) {
-                std::cout << "Error: Invalid input." << std::endl;
-            } else if ( check == "notFound" ) {
+            if ( check == "notFound" ) {
                 std::cout << "Error: Not found." << std::endl;
             } else {
                 stage(gigs, input.at(0));
