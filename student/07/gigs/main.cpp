@@ -111,10 +111,8 @@ bool is_valid_input(GIGS gigs, std::vector< std::string > input)
         for ( auto &date : artist.second) {
             if ( input.at(3) == date.second.at(1)) // check is it the same venue
             {
-                std::cout << "same venue" << std::endl;
                 if ( date.first == input.at(1)) {
-                    std::cout << "same date" << std::endl;
-                    std::cout << exists << std::endl;
+                    exists = "alreadyExists";
                     continue;
                 }
             }
