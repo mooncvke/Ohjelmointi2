@@ -29,6 +29,7 @@
 #include <algorithm>
 
 
+
 // GIGS: map<artists, map< date, vector< town, stage >>>
 using GIGS = std::map< std::string, std::map < std::string, std::vector < std::string >>>;
 
@@ -102,6 +103,41 @@ bool is_valid_date(const std::string& date_str)
     }
 }
 
+bool is_valid_input(GIGS gigs, std::vector< std::string > input)
+{
+    // check if gig already is booked to the venue on given date
+    std::string exists = "doesntExist";
+    for ( auto &artist : gigs) {
+        for ( auto &date : artist.second) {
+            if ( input.at(3) == date.second.at(1)) // check is it the same venue
+            {
+                if ( date.first == input.at(1)) {
+                    exists = "alreadyExists";
+                    continue;
+                }
+            }
+        }
+    }
+
+    if(! is_valid_date(input.at(1)) ) {
+        std::cout << "Error: Invalid date." << std::endl;
+        return false;
+    } if ( gigs.find(input.at(0)) != gigs.end() ) { // found
+
+        if ( gigs.at(input.at(0)).find(input.at(1)) != gigs.at(input.at(0)).end() ) // artist already has gig at this date
+            {
+                std::cout << "Error: Already exists." << std::endl;
+                return false;
+            }
+
+    } else if (exists == "alreadyExists") {
+        std::cout << "Error: Already exists." << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
 int get_input(GIGS &gigs){
     std::cout << "Give a name for input file: ";
     std::string inputFile;
@@ -124,14 +160,13 @@ int get_input(GIGS &gigs){
             gigDate = result.at(1);
 
             // error checking
-            if (result.size() != 4){
-                std::cout << "Error invalid format in file." << std::endl;
-                return EXIT_FAILURE;
-            } else if (result.at(0) == "" || result.at(1) == "" || result.at(2) == "" || result.at(3) == "") {
-                std::cout << "Error invalid format in file." << std::endl;
+            if (result.size() != 4 || result.at(0) == "" || result.at(1) == "" || result.at(2) == "" || result.at(3) == ""){
+                std::cout << "Error: Invalid format in file." << std::endl;
                 return EXIT_FAILURE;
             }
-
+            if ( is_valid_input(gigs, result) == false) {
+                return EXIT_FAILURE;
+            }
 
             // remove first and second alkio from vector
             result.erase(result.begin());
@@ -250,10 +285,10 @@ void addGig(GIGS &gigs, std::vector<std::string> input) {
     std::vector < std::string > stage;
     std::map < std::string, std::vector< std::string>> info;
 
+    stage.push_back(input.at(2));
     stage.push_back(input.at(3));
-    stage.push_back(input.at(4));
 
-    gigs.at(input.at(1)).insert( {input.at(2), stage });
+    gigs.at(input.at(0)).insert( {input.at(1), stage });
 
     std::cout << "Gig added." << std::endl;
 }
@@ -263,12 +298,12 @@ void cancel(GIGS &gigs, std::vector< std::string > input)
     std::string correctDate = "notTheDate";
     GIGS gigsCopy = gigs;
 
-    for ( auto &date : gigsCopy.at(input.at(1))) {
-        if ( date.first >= input.at(2)) {
+    for ( auto &date : gigsCopy.at(input.at(0))) {
+        if ( date.first >= input.at(1)) {
             correctDate = "isTheDate";
         }
         if ( correctDate == "isTheDate") {
-            gigs.at(input.at(1)).erase(date.first);
+            gigs.at(input.at(0)).erase(date.first);
         }
     }
     std::cout << "Artist's gigs after the given date cancelled." << std::endl;
@@ -292,7 +327,6 @@ int main()
         std::cout << "gigs> ";
         getline(std::cin, userInput);
 
-        // use split function to split userInput into vector
         std::vector< std::string > input;
         std::string userInputUpper = "";
         input = split(userInput, ' ' );
@@ -302,87 +336,74 @@ int main()
             userInputUpper += letter;
         }
 
-        input.at(0) = userInputUpper;
+        input.erase(input.begin());
+
 
         // quit program
-        if ( input.at(0) == "QUIT") {
+        if ( userInputUpper == "QUIT") {
             val = false;
         }
         // print all artists
-        else if ( input.at(0) == "ARTISTS") {
+        else if ( userInputUpper == "ARTISTS") {
+
             artists(gigs);
         }
         // print gigs of one artist
         // first check if input has enough parameters
-        else if ( input.at(0) == "ARTIST") {
-            if ( input.size() < 2 ) {
+        else if ( userInputUpper == "ARTIST") {;
+            if ( input.size() < 1 ) {
                 std::cout << "Error: Invalid input." << std::endl;
-            } else if ( gigs.find(input.at(1)) == gigs.end() ) {
+            } else if ( gigs.find(input.at(0)) == gigs.end() ) {
                 std::cout << "Error: Not found." << std::endl;
             } else {
-                artist(gigs, input.at(1));
+                artist(gigs, input.at(0));
             }
 
         }
-        else if ( input.at(0) == "STAGES") {
+        else if ( userInputUpper == "STAGES") {
             stages(gigs);
         }
-        else if ( input.at(0) == "STAGE") {
+        else if ( userInputUpper == "STAGE") {
             // check if stage exists
             std::string check = "notFound";
             for( auto &i : gigs ) {
                 for ( auto &j : i.second) {
-                    if ( input.at(1) == j.second.at(1)) {
+                    if ( input.at(0) == j.second.at(1)) {
                         check = "found";
                     }
                 }
             }
-            if ( input.size() < 2 ) {
+            if ( input.size() < 1 ) {
                 std::cout << "Error: Invalid input." << std::endl;
             } else if ( check == "notFound" ) {
                 std::cout << "Error: Not found." << std::endl;
             } else {
-                stage(gigs, input.at(1));
+                stage(gigs, input.at(0));
             }
         }
-        else if ( input.at(0) =="ADD_ARTIST") {
-            if ( input.size() < 2 ) {
+        else if ( userInputUpper =="ADD_ARTIST") {
+            if ( input.size() < 1 ) {
                 std::cout << "Error: Invalid input." << std::endl;
-            } else if (  gigs.find(input.at(1)) != gigs.end() ) {
+            } else if (  gigs.find(input.at(0)) != gigs.end() ) {
                 std::cout << "Error: Alredy exists." << std::endl;
             } else {
-                addArtist(gigs, input.at(1));
+                addArtist(gigs, input.at(0));
             }
         }
-        else if ( input.at(0) == "ADD_GIG") {
-
-            std::string exists = "doesntExist";
-            for ( auto &artist : gigs) {
-                for ( auto &date : artist.second) {
-                    if ( input.at(4) == date.second.at(1)) {
-                        if ( artist.first == input.at(2)) {
-                            exists = "alreadyExists";
-                        }
-                    }
-                }
-            }
-
-            if ( input.size() < 5 ) {
+        else if ( userInputUpper == "ADD_GIG") {
+            if ( input.size() < 4 ) {
                 std::cout << "Error: Invalid input." << std::endl;
-            } else if ( gigs.find(input.at(1)) == gigs.end() ) {
+            }
+            else if ( gigs.find(input.at(0)) == gigs.end() ) { // can't find artist
                 std::cout << "Error: Not found." << std::endl;
-            } else if(is_valid_date(input.at(2)) == false) {
-                std::cout << "Error: Invalid date." << std::endl;
-            } else if ( gigs.at(input.at(1)).find(input.at(2)) == gigs.at(input.at(1)).end() ) // date alredy taken
-            {
-                std::cout << "Error: Already exists." << std::endl;
-            } else if (exists == "alreadyExists") {
-                std::cout << "Error: Already exists." << std::endl;
+
+            } else if ( is_valid_input(gigs, input) == false) {
+                continue;
             } else {
                 addGig(gigs, input);
             }
 
-        } else if ( input.at(0) == "CANCEL") {
+        } else if ( userInputUpper == "CANCEL") {
             std::string check = "isNotGigs";
             for ( auto &date : gigs.at(input.at(1))) {
                 if ( date.first >= input.at(2)) {
@@ -390,7 +411,7 @@ int main()
                 }
             }
 
-            if ( input.size() < 3) {
+            if ( input.size() < 2) {
                 std::cout << "Error: Invalid input." << std::endl;
             } else if ( check == "isNotGigs" ) {
                 std::cout << "Error: No gigs after the given date." << std::endl;
