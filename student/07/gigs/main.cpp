@@ -103,7 +103,7 @@ bool is_valid_date(const std::string& date_str)
 }
 
 int get_input(GIGS &gigs){
-    std::cout << "Give name for a input file: ";
+    std::cout << "Give a name for input file: ";
     std::string inputFile;
     getline(std::cin, inputFile);
 
