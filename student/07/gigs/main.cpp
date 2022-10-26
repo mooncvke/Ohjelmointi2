@@ -497,7 +497,7 @@ int main()
             // check if there is gigs after given date
             std::string check = "isNotGigs";
             for ( auto &date : gigs.at(input.at(0))) {
-                if ( date.first >= input.at(1)) {
+                if ( date.first > input.at(1)) {
                     check = "isGigs";
                     continue;
                 }
