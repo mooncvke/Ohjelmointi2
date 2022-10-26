@@ -18,7 +18,7 @@
  * STAGE: requires name of the stage as parameter. Prints artists that have gigs at the given stage.
  * ADD-ARTIST: requires artist's name as parameter. Adds new artist to the calender.
  * ADD_GIG: requires artist's name, gig's date, town and stage as parameters. Adds gig to the given artist.
- * CANCEL: requires artist's name and date as parameters. Cancels given artist's gigs on and after given date.
+ * CANCEL: requires artist's name and date as parameters. Cancels given artist's gigs after given date.
  *
  * Program author
  * Name: Tuuli Silvennoinen
@@ -153,7 +153,6 @@ bool is_valid_input(GIGS gigs, std::vector< std::string > input)
     // if no errors return true
     return true;
 }
-
 
 // get data from file and add it to the gigs data-structure
 int get_input(GIGS &gigs) {
@@ -354,11 +353,11 @@ void cancel(GIGS &gigs, std::vector< std::string > input)
     // go through gigsCopy-map. if gone through gigs-map program would crash
     // because in loop from gigs is erased elements, therefore is needed to go through copy of the gigs
     for ( auto &date : gigsCopy.at(input.at(0))) {
-        // if date from the map is same as given date or bigger
-        if ( date.first >= input.at(1)) {
+        // if date from the map is bigger as given date
+        if ( date.first > input.at(1)) {
             correctDate = "isTheDate";
         }
-        // when date from the map is given date or bigger -> remove date from gigs-map
+        // when date from the map is bigger than given -> remove date from gigs-map
         if ( correctDate == "isTheDate") {
             gigs.at(input.at(0)).erase(date.first);
         }
@@ -397,7 +396,6 @@ int main()
             letter = toupper(letter);
             userInputUpper += letter;
         }
-
         // erase command from input vector
         input.erase(input.begin());
 
@@ -491,7 +489,7 @@ int main()
                 std::cout << "Error: Not found." << std::endl;
                 continue;
             }
-            // check if valiod date with is_valid_date-function
+            // check if valid date with is_valid_date-function
             else if ( ! is_valid_date(input.at(1))) {
                 std::cout << "Error: Invalid date." << std::endl;
                 continue;
@@ -504,12 +502,11 @@ int main()
                     continue;
                 }
             }
+
             if ( check == "isNotGigs" ) {
                 std::cout << "Error: No gigs after the given date." << std::endl;
                 continue;
-            }
-            else
-            {
+            } else {
                 cancel(gigs, input);
             }
 
