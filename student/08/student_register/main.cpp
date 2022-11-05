@@ -128,6 +128,7 @@ void writeDataToFile( const std::string &filename, const std::map<std::string, S
                 << ptr->user_id<<';'
                 << ptr->name<<';'
                 << ptr->phone_number<<';'
+                << ptr->email << ';'
                 << ptr->skype<< std::endl;
            iter++;
        }
