@@ -90,6 +90,51 @@ bool is_valid_phone_number(const std::string number) {
     return true;
 }
 
+bool changeStudentData( const std::string &student_number, std::map<std::string, Student*> &students)
+{
+    // check if in student register
+    if( students.find(student_number) == students.end() )
+    {
+        std::cout << std::endl << "There is no student with the given number!" << std::endl;
+        return false;
+    }
+    // read and check phone number
+    std::string phone;
+    std::cout << "Enter a new phone number: ";
+    std::getline(std::cin, phone);
+    std::cout << std::endl;
+
+    if ( !is_valid_phone_number(phone) ) {
+        return false;
+    }
+    // update phone number
+    students.at(student_number)->phone_number = phone;
+    return true;
+}
+
+void writeDataToFile( const std::string &filename, const std::map<std::string, Student*> &students )
+{
+    // open file
+    std::ofstream file(filename);
+
+    if (file)
+    {
+       std::map<std::string, Student*>::const_iterator iter = students.begin();
+       Student *ptr;
+       while(iter != students.end())
+       {
+           ptr = iter->second;
+           file << ptr->student_number<<';'
+                << ptr->user_id<<';'
+                << ptr->name<<';'
+                << ptr->phone_number<<';'
+                << ptr->skype<< std::endl;
+           iter++;
+       }
+       file.close();
+    }
+}
+
 
 int main() {
     std::string file_name = "";
@@ -144,7 +189,11 @@ int main() {
                 std::cout << "Erroneous parameters!" << std::endl << HELP_TEXT;
                 continue;
             }
-            // TODO: Add functionality here
+            if (changeStudentData( parts.at(1), student_numbers ))
+            {
+                // save changes to file
+                writeDataToFile(file_name, user_ids);
+            }
 
 
         } else if(command == "Q" or command == "q") {
