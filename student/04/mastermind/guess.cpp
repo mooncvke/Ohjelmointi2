@@ -11,7 +11,7 @@ guess_vector Guess::get_input(std::vector<char>& correct_colors, std::vector< st
 
     std::vector<char> colors;
     std::string answer;
-    std::cout << "ROW: ";
+    std::cout << "ROW> ";
     std::cin >> answer;
 
     // input is in string -> it is changed to vector
@@ -49,6 +49,12 @@ guess_amount_vector Guess::check_if_correct(std::vector<char>& colors, std::vect
         if ( color == correct_colors.at(i)) {
             // user guessed color and place correctly and 1 is added to guessed_correctly variable
             guessed_correctly += 1;
+
+            if (std::find(used_colors.begin(), used_colors.end(), color) != used_colors.end()) {
+                if ( guessed_color_correctly > 0) {
+                guessed_color_correctly -= 1;
+            }
+            used_colors.push_back(color);
         // didn't guess place and color correctly
         } else {
             //if color isn't already in guessed colors
@@ -58,7 +64,7 @@ guess_amount_vector Guess::check_if_correct(std::vector<char>& colors, std::vect
                 guessed_color_correctly = amount;
                 // add color to used colors
                 used_colors.push_back(color);
-            }
+           } }
         }
         ++i;
     }
@@ -74,7 +80,7 @@ guess_amount_vector Guess::check_if_correct(std::vector<char>& colors, std::vect
 // check if user guessed correct color
 int Guess::check_if_correct_color(std::vector<char>& correct_colors, char guessed_color, int guessed_color_correctly, int i)
 {
-    // go throush correct colors
+    // go through correct colors
     for(char color : correct_colors) {
         // if guessed color is same as correct color
         if ( color == guessed_color) {
@@ -101,13 +107,14 @@ bool Guess::check_if_ok(std::vector<char> &colors)
     for( char color : colors ) {
         // change color to uppercase letter to make easier to checking it
         color = toupper(color);
+        // if length of the color combination is not 4
+        if ( length != 4) {
+            std::cout << "Wrong size" << std::endl;
+            return false;
+        }
         // if color is not color used in this game
         if (!( color == 'B' || color == 'R' || color == 'Y' || color == 'G' || color == 'O' || color == 'V')) {
             std::cout << "Unknown color" << std::endl;
-            return false;
-        // if length of the color combination is not 4
-        }if ( length != 4) {
-            std::cout << "Wrong size" << std::endl;
             return false;
         }
     }

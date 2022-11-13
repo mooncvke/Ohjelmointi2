@@ -24,7 +24,7 @@
  *
  * Program author
  * Name: Tuuli Silvennoinen
- * Student number: 15018558
+ * Student number: 150185558
  * UserID: kftusi
  * E-Mail: tuuli.silvennoinen@tuni.fi
  *
@@ -149,7 +149,7 @@ vector<char> get_input(vector<char> correct_colors)
         // Below the function itself is called recursively, which makes the
         // above code executed until an acceptable input_str is given,
         // but instead you can enclose the above code inside a loop structure.
-        get_input(correct_colors);
+        return get_input(correct_colors);
     }
     // function returns the correct_colors
     return correct_colors;
@@ -168,7 +168,7 @@ void print_line_with_char(char c, unsigned int line_length)
 }
 
 // Prints all color series.
-void print_all(const vector< vector < char> > all_guesses, vector < vector <int >> amount_guessed)
+void print_all(const vector< vector < char> >& all_guesses, vector < vector <int >> amount_guessed)
 {   // use print_line_with_char function to print line before guessed colors
     print_line_with_char('=', 2 * (SIZE + SUFFIX_LENGTH_IN_PRINT) + 1);
 
