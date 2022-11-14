@@ -108,9 +108,11 @@ int main() {
         for ( auto &com : COMMANDS) {
             if( com.str == cmd ) {
                 found = "found";
-                if ( com.action == nullptr ) {
-                    cout << GREETING_AT_END << endl;
-                    return EXIT_SUCCESS;
+                if ( size == 0 ) {
+                    if ( com.action == nullptr ) {
+                        cout << GREETING_AT_END << endl;
+                        return EXIT_SUCCESS;
+                    }
                 }
                 if ( size != com.parameter_number ) {
                     cout << "Error: wrong number of parameters." << endl;
