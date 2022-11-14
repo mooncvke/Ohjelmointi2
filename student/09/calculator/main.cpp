@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+
+
 using namespace std;
 
 const string GREETING_AT_END = "Thanks and see you later!";
@@ -54,6 +56,9 @@ const vector<Command> COMMANDS = {
     {"DECREASE", 2, false, subtraction},
     {"MULTIPLY", 2, false, multiplication},
     {"DIVIDE", 2, false, division},
+    {"^", 2, false, exponentiation},
+    {"POWER", 2, false, exponentiation},
+    {"EXP", 2, false, exponentiation},
     {"STOP", 0, true, nullptr},
     {"QUIT", 0, true, nullptr},
     {"EXIT", 0, true, nullptr},
