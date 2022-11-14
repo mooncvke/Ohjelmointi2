@@ -86,8 +86,50 @@ int main() {
         }
 
         string command_to_be_executed = pieces.at(0);
+        string cmd = "";
+
+        // command to upper case
+        for ( char letter : command_to_be_executed ) {
+            char letter2 = toupper(letter);
+            cmd += letter2;
+        }
+
+        // size of input w/o command
+        vector<string>::size_type size;
+        size = pieces.size() - 1;
 
         // TODO: Implement command execution here!
+        string found = "notfound";
+        for ( auto &com : COMMANDS) {
+            if( com.str == cmd ) {
+                found = "found";
+                if ( size == 0 ) {
+                    cout << GREETING_AT_END << endl;
+                    return EXIT_SUCCESS;
+                }
+                if ( size != com.parameter_number ) {
+                    cout << "Error: wrong number of parameters." << endl;
+                    continue;
+                } else {
+                    double result1;
+                    double result2;
+
+                    if ( !string_to_double(pieces.at(1), result1) ) {
+                        cout << "Error: a non-number operand." << endl;
+                    } else if ( !string_to_double(pieces.at(2), result2) ) {
+                        cout << "Error: a non-number operand." << endl;
+                    } else {
+                        cout << com.action ( result1, result2 ) << endl;
+                    }
+                }
+
+            }
+        }
+        if ( found == "notfound" ) {
+            cout << "Error: unknown command." << endl;
+
+        }
+        found = "notfound";
 
     }
 }
