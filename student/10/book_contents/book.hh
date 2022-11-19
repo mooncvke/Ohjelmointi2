@@ -20,6 +20,7 @@
 #include <set>
 #include <iostream>
 #include <memory>
+#include <map>
 
 
 // Named constants to improve readability in other modules
@@ -37,8 +38,8 @@ struct Chapter
     std::string id_ = EMPTY;
     std::string fullName_ = EMPTY;
     int length_ = 0;
-    Chapter* parentChapter_ = nullptr; // osoittaa toiseen kappaleeseen (yläkappaleeseen
-    std::vector<Chapter*> subchapters_; // vektori koostuu ospittimista jotka osoittaa eri kappaleisiin -> alakappaleisiin
+    Chapter* parentChapter_ = nullptr; // yläkappaleen osoite
+    std::vector<Chapter*> subchapters_; // vektori koostuu alakappaleiden osoitteista
     std::shared_ptr< Chapter > chapterAddress_; // osoitin johon voidaan tallentaa chapter structin muistiosoite
 };
 
@@ -118,9 +119,11 @@ private:
      * to make things easier and to avoid "copy-paste-coding".
      */
 
-    std::vector< Chapter > database_;
+    std::map<std::string, Chapter > database_;
     // Returns a pointer for ID.
     Chapter* findChapter(const std::string& id) const;
+
+    Chapter chapter_;
 
     // Prints the the data in a container.
     void printGroup(const std::string& id, const std::string& group,
