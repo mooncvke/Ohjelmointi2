@@ -19,8 +19,8 @@
 #include <vector>
 #include <set>
 #include <iostream>
-#include <memory>
 #include <map>
+#include <unordered_map>
 
 
 // Named constants to improve readability in other modules
@@ -40,7 +40,7 @@ struct Chapter
     int length_ = 0;
     Chapter* parentChapter_ = nullptr; // yläkappaleen osoite
     std::vector<Chapter*> subchapters_; // vektori koostuu alakappaleiden osoitteista
-    std::shared_ptr< Chapter > chapterAddress_; // osoitin johon voidaan tallentaa chapter structin muistiosoite
+    bool open_ = true;
 };
 
 
@@ -53,7 +53,8 @@ public:
     // Constructor
     Book();
 
-
+    // Destructor
+    ~Book();
 
     // Adds a new Chapter to the datastructure.
     void addNewChapter(const std::string& id, const std::string& fullName,
@@ -119,11 +120,13 @@ private:
      * to make things easier and to avoid "copy-paste-coding".
      */
 
-    std::map<std::string, Chapter > database_;
+    using Data = std::unordered_map<std::string, Chapter* >;
+
+    Data database_;
     // Returns a pointer for ID.
     Chapter* findChapter(const std::string& id) const;
 
-    Chapter chapter_;
+    bool chapterExists(const std::string &id) const;
 
     // Prints the the data in a container.
     void printGroup(const std::string& id, const std::string& group,
@@ -132,6 +135,7 @@ private:
     // Turns a vector of chapters to a set of IDs.
     // Needed only for printSubchapters.
     IdSet vectorToIdSet(const std::vector<Chapter*>& container) const;
+
 };
 
 #endif // BOOK_HH
