@@ -136,6 +136,8 @@ private:
     // Needed only for printSubchapters.
     IdSet vectorToIdSet(const std::vector<Chapter*>& container) const;
 
+    void printChaptersRecursive(Chapter *ch, int index, const std::string indent) const;
+    void goThroughRecursive(std::vector<Chapter*>) const;
 };
 
 #endif // BOOK_HH
