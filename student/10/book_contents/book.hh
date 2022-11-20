@@ -121,6 +121,7 @@ private:
      */
 
     using Data = std::unordered_map<std::string, Chapter* >;
+    using DataAlphabet = std::map< std::string, Chapter* >;
 
     Data database_;
     // Returns a pointer for ID.
@@ -137,7 +138,8 @@ private:
     IdSet vectorToIdSet(const std::vector<Chapter*>& container) const;
 
     void printChaptersRecursive(Chapter *ch, int index, const std::string indent) const;
-    void goThroughRecursive(std::vector<Chapter*>) const;
+    void goThroughRecursive(std::vector<Chapter*>, bool open) const;
+    DataAlphabet databaseAlphabetical() const;
 };
 
 #endif // BOOK_HH

@@ -47,14 +47,9 @@ void Book::printIds(Params params) const
 {
     std::cout << "Book has " << database_.size() << " chapters:" << std::endl;
 
+    DataAlphabet databaseAlphabet = databaseAlphabetical();
 
-    std::map< std::string, Chapter* > databaseAlphabetical;
-
-    for (auto &chapter : database_) {
-        databaseAlphabetical.insert( {chapter.first, chapter.second} );
-    }
-
-    for ( auto &chapter : databaseAlphabetical ) {
+    for ( auto &chapter : databaseAlphabet ) {
         std::cout << chapter.second->fullName_ << " --- " << chapter.second->id_ << std::endl;
     }
 }
@@ -83,7 +78,7 @@ void Book::close(Params params) const
     if ( database_.at(params.at(0))->open_ == true ) {
         database_.at(params.at(0))->open_ = false;
 
-        goThroughRecursive(database_.at(params.at(0))->subchapters_);
+        goThroughRecursive(database_.at(params.at(0))->subchapters_, false);
 
     } else { return; }
 }
@@ -95,7 +90,10 @@ void Book::open(Params params) const
 
 void Book::openAll(Params params) const
 {
-
+    for ( auto ch : database_ ) {
+        database_.at(ch.first)->open_ = true;
+        goThroughRecursive(ch.second->subchapters_, true);
+    }
 }
 
 void Book::printParentsN(Params params) const
@@ -111,6 +109,20 @@ void Book::printSubchaptersN(Params params) const
 void Book::printSiblingChapters(Params params) const
 {
 
+    Chapter* parentCh = database_.at(params.at(0))->parentChapter_;
+    std::cout << params.at(0) << " has " << parentCh->subchapters_.size() - 1
+              << " sibling chapters:" << std::endl;
+    // add ids to vector to print them alphabetically
+    std::vector< std::string > alphabetical;
+    for ( auto ch : parentCh->subchapters_ ) {
+        if ( ch->id_ != params.at(0) ) {
+            alphabetical.push_back(ch->id_);
+        }
+    }
+    std::sort(alphabetical.begin(), alphabetical.end());
+    for ( auto i : alphabetical ) {
+        std::cout << i << std::endl;
+    }
 }
 
 void Book::printTotalLength(Params params) const
@@ -185,15 +197,25 @@ void Book::printChaptersRecursive(Chapter *ch, int index, const std::string inde
     }
 }
 
-void Book::goThroughRecursive(std::vector<Chapter*> subCh ) const
+void Book::goThroughRecursive(std::vector<Chapter*> subCh, bool open ) const
 {
     if ( subCh.size() > 0 ) {
         for ( auto *subchapter : subCh) {
             if ( subchapter->subchapters_.size() > 0 ) {
-                database_.at(subchapter->id_)->open_ = false;
-                goThroughRecursive(subchapter->subchapters_);
+                database_.at(subchapter->id_)->open_ = open;
+                goThroughRecursive(subchapter->subchapters_, open);
             }
         }
     } else { return; }
+}
+
+std::map<std::string, Chapter *> Book::databaseAlphabetical() const
+{
+    DataAlphabet databaseAlphabetical;
+
+    for (auto &chapter : database_) {
+        databaseAlphabetical.insert( {chapter.first, chapter.second} );
+    }
+    return databaseAlphabetical;
 }
 
