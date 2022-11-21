@@ -139,7 +139,9 @@ private:
 
     void printChaptersRecursive(Chapter *ch, int index, const std::string indent) const;
     void goThroughRecursive(std::vector<Chapter*>, bool open) const;
+    int countThroughRecursive(std::vector<Chapter*>, int length) const;
     DataAlphabet databaseAlphabetical() const;
+    std::pair< int, std::string > longestThroughRecursive(std::vector<Chapter *> subCh, std::pair <int, std::string > result) const;
 };
 
 #endif // BOOK_HH

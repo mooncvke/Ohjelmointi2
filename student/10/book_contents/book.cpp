@@ -127,12 +127,34 @@ void Book::printSiblingChapters(Params params) const
 
 void Book::printTotalLength(Params params) const
 {
+    int length = 0;
+    length += database_.at(params.at(0))->length_;
 
+    for ( auto subCh : database_.at(params.at(0))->subchapters_ ) {
+        length += subCh->length_;
+        length = countThroughRecursive(subCh->subchapters_, length);
+    }
+
+    std::cout << "Total length of " << params.at(0) << " is " << length << "." << std::endl;
 }
 
 void Book::printLongestInHierarchy(Params params) const
 {
+    int length = 0;
+    length += database_.at(params.at(0))->length_;
+    std::string id = "";
+    id = database_.at(params.at(0))->id_;
+    std::pair< int, std::string > result = {length, id};
 
+    for ( auto subCh : database_.at(params.at(0))->subchapters_ ) {
+        if ( subCh->length_ > result.first ) {
+            result.first = subCh->length_;
+            result.second = subCh->id_;
+        }
+        result = longestThroughRecursive(subCh->subchapters_, result);
+    }
+    std::cout << "With the length of " << result.first << ", " << result.second
+              << " is the longest in " << params.at(0) << "'s hierarchy." << std::endl;
 }
 
 void Book::printShortestInHierarchy(Params params) const
@@ -207,6 +229,36 @@ void Book::goThroughRecursive(std::vector<Chapter*> subCh, bool open ) const
             }
         }
     } else { return; }
+}
+
+int Book::countThroughRecursive(std::vector<Chapter *> subCh, int length) const
+{
+    if ( subCh.size() > 0 ) {
+        for ( auto *subchapter : subCh) {
+            if ( subchapter->subchapters_.size() > 0 ) {
+                length += subchapter->length_;
+                countThroughRecursive(subchapter->subchapters_, length);
+            }
+        }
+    } else { return length; }
+    return length;
+}
+
+std::pair< int, std::string > Book::longestThroughRecursive(std::vector<Chapter *> subCh, std::pair <int, std::string > result) const
+{
+    if ( subCh.size() > 0 ) {
+        for ( auto *subchapter : subCh) {
+            if ( subchapter->length_ > result.first ) {
+
+                result.first = subchapter->length_;
+                result.second = subchapter->id_;
+            }
+            if ( subchapter->subchapters_.size() > 0 ) {
+                longestThroughRecursive(subchapter->subchapters_, result);
+            }
+        }
+    } else { return result; }
+    return result;
 }
 
 std::map<std::string, Chapter *> Book::databaseAlphabetical() const
