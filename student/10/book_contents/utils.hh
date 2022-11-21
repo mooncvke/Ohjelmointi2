@@ -17,6 +17,7 @@
 
 #include "book.hh"
 #include <string>
+#include <memory>
 
 namespace Utils{
 

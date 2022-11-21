@@ -21,6 +21,7 @@
 #include <iostream>
 #include <map>
 #include <unordered_map>
+#include <algorithm>
 
 
 // Named constants to improve readability in other modules

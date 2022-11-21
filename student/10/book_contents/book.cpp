@@ -119,7 +119,7 @@ void Book::printParentsN(Params params) const
                 }
             }
 
-            sort(parents.begin(), parents.end());
+           sort(parents.begin(), parents.end());
             std::cout << params.at(0) << " has " << stoi(params.at(1)) - num << " parent chapters:" << std::endl;
             for ( auto parent : parents ) {
                 std::cout << parent << std::endl;

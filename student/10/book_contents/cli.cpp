@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <memory>
 
 #include "cli.hh"
 #include "utils.hh"
