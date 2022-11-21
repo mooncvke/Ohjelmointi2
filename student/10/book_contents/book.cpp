@@ -7,7 +7,6 @@ Book::Book():
 
 Book::~Book()
 {
-
     // free memory
     for( auto pair : database_ ) {
         delete pair.second;
@@ -22,7 +21,9 @@ void Book::addNewChapter(const std::string &id, const std::string &fullName, int
         return;
     }
     // create and add a new chapter
-    Chapter *new_ch = new Chapter{id, fullName, length};
+    std::vector<Chapter*> subchapters;
+    Chapter* parentChapter = nullptr;
+    Chapter *new_ch = new Chapter{id, fullName, length, parentChapter, subchapters};
     database_.insert( {new_ch->id_, new_ch} );
 }
 
@@ -43,7 +44,7 @@ void Book::addRelation(const std::string &subchapter, const std::string &parentC
     }
 }
 
-void Book::printIds(Params params) const
+void Book::printIds(Params) const
 {
     std::cout << "Book has " << database_.size() << " chapters:" << std::endl;
     // get database_ in alphabetical order
@@ -54,7 +55,7 @@ void Book::printIds(Params params) const
     }
 }
 
-void Book::printContents(Params params) const
+void Book::printContents(Params) const
 {
     // find main chapters
     std::vector< Chapter* > mainChapters = {};
@@ -91,7 +92,7 @@ void Book::open(Params params) const
     }
 }
 
-void Book::openAll(Params params) const
+void Book::openAll(Params ) const
 {
     for ( auto chapter : database_ ) {
         database_.at(chapter.first)->open_ = true;
@@ -239,12 +240,12 @@ void Book::printShortestInHierarchy(Params params) const
     }
 }
 
-void Book::printParent(Params params) const
+void Book::printParent(Params) const
 {
 
 }
 
-void Book::printSubchapters(Params params) const
+void Book::printSubchapters(Params) const
 {
 
 }
@@ -264,7 +265,7 @@ bool Book::chapterExists(const std::string &id) const
     return database_.find(id) != database_.end();
 }
 
-void Book::printGroup(const std::string &id, const std::string &group, const IdSet &container) const
+void Book::printGroup(const std::string&, const std::string&, const IdSet&) const
 {
 
 }
