@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+
+
 using namespace std;
 
 const string GREETING_AT_END = "Thanks and see you later!";
@@ -54,6 +56,9 @@ const vector<Command> COMMANDS = {
     {"DECREASE", 2, false, subtraction},
     {"MULTIPLY", 2, false, multiplication},
     {"DIVIDE", 2, false, division},
+    {"^", 2, false, exponentiation},
+    {"POWER", 2, false, exponentiation},
+    {"EXP", 2, false, exponentiation},
     {"STOP", 0, true, nullptr},
     {"QUIT", 0, true, nullptr},
     {"EXIT", 0, true, nullptr},
@@ -86,8 +91,52 @@ int main() {
         }
 
         string command_to_be_executed = pieces.at(0);
+        string cmd = "";
+
+        // command to upper case
+        for ( char letter : command_to_be_executed ) {
+            char letter2 = toupper(letter);
+            cmd += letter2;
+        }
+
+        // size of input w/o command
+        vector<string>::size_type size;
+        size = pieces.size() - 1;
 
         // TODO: Implement command execution here!
+        string found = "notfound";
+        for ( auto &com : COMMANDS) {
+            if( com.str == cmd ) {
+                found = "found";
+                if ( size == 0 ) {
+                    if ( com.action == nullptr ) {
+                        cout << GREETING_AT_END << endl;
+                        return EXIT_SUCCESS;
+                    }
+                }
+                if ( size != com.parameter_number ) {
+                    cout << "Error: wrong number of parameters." << endl;
+                    continue;
+                } else {
+                    double result1;
+                    double result2;
+
+                    if ( !string_to_double(pieces.at(1), result1) ) {
+                        cout << "Error: a non-number operand." << endl;
+                    } else if ( !string_to_double(pieces.at(2), result2) ) {
+                        cout << "Error: a non-number operand." << endl;
+                    } else {
+                        cout << com.action ( result1, result2 ) << endl;
+                    }
+                }
+
+            }
+        }
+        if ( found == "notfound" ) {
+            cout << "Error: unknown command." << endl;
+
+        }
+        found = "notfound";
 
     }
 }
