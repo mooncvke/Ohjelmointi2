@@ -142,6 +142,7 @@ private:
     int countThroughRecursive(std::vector<Chapter*>, int length) const;
     DataAlphabet databaseAlphabetical() const;
     std::pair< int, std::string > longestThroughRecursive(std::vector<Chapter *> subCh, std::pair <int, std::string > result) const;
+    std::pair< int, std::string > shortestThroughRecursive(std::vector<Chapter *> subCh, std::pair <int, std::string > result) const;
 };
 
 #endif // BOOK_HH

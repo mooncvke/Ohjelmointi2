@@ -98,12 +98,46 @@ void Book::openAll(Params params) const
 
 void Book::printParentsN(Params params) const
 {
+    std::string ch = params.at(0);
+    int num = stoi(params.at(1));
+    std::vector< std::string > parents;
 
+    while ( num > 0 ) {
+        parents.push_back(database_.at(ch)->parentChapter_->id_);
+        ch = database_.at(ch)->parentChapter_->id_;
+        num--;
+    }
+
+    sort(parents.begin(), parents.end());
+    std::cout << params.at(0) << " has " << params.at(1) << " parent chapters:" << std::endl;
+    for ( auto parent : parents ) {
+        std::cout << parent << std::endl;
+    }
 }
 
 void Book::printSubchaptersN(Params params) const
 {
+    std::string ch = params.at(0);
+    int num = stoi(params.at(1));
+    std::vector< std::string > children;
 
+    int length = 0;
+    length += database_.at(params.at(0))->length_;
+    std::string id = "";
+    id = database_.at(params.at(0))->id_;
+    std::pair< int, std::string > result = {length, id};
+
+    for ( auto subCh : database_.at(params.at(0))->subchapters_ ) {
+        if ( subCh->length_ > result.first ) {
+            result.first = subCh->length_;
+            result.second = subCh->id_;
+        }
+        result = longestThroughRecursive(subCh->subchapters_, result);
+    }
+    std::vector<std::string> res;
+    res.push_back(result.second);
+    res.push_back((std::to_string(result.first)));
+    printParentsN(res);
 }
 
 void Book::printSiblingChapters(Params params) const
@@ -159,7 +193,21 @@ void Book::printLongestInHierarchy(Params params) const
 
 void Book::printShortestInHierarchy(Params params) const
 {
+    int length = 0;
+    length += database_.at(params.at(0))->length_;
+    std::string id = "";
+    id = database_.at(params.at(0))->id_;
+    std::pair< int, std::string > result = {length, id};
 
+    for ( auto subCh : database_.at(params.at(0))->subchapters_ ) {
+        if ( subCh->length_ < result.first ) {
+            result.first = subCh->length_;
+            result.second = subCh->id_;
+        }
+        result = shortestThroughRecursive(subCh->subchapters_, result);
+    }
+    std::cout << "With the length of " << result.first << ", " << result.second
+              << " is the shortest in " << params.at(0) << "'s hierarchy." << std::endl;
 }
 
 void Book::printParent(Params params) const
@@ -249,6 +297,23 @@ std::pair< int, std::string > Book::longestThroughRecursive(std::vector<Chapter 
     if ( subCh.size() > 0 ) {
         for ( auto *subchapter : subCh) {
             if ( subchapter->length_ > result.first ) {
+
+                result.first = subchapter->length_;
+                result.second = subchapter->id_;
+            }
+            if ( subchapter->subchapters_.size() > 0 ) {
+                longestThroughRecursive(subchapter->subchapters_, result);
+            }
+        }
+    } else { return result; }
+    return result;
+}
+
+std::pair<int, std::string> Book::shortestThroughRecursive(std::vector<Chapter *> subCh, std::pair<int, std::string> result) const
+{
+    if ( subCh.size() > 0 ) {
+        for ( auto *subchapter : subCh) {
+            if ( subchapter->length_ < result.first ) {
 
                 result.first = subchapter->length_;
                 result.second = subchapter->id_;
