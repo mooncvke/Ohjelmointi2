@@ -30,10 +30,8 @@ void Book::addNewChapter(const std::string &id, const std::string &fullName, int
 void Book::addRelation(const std::string &subchapter, const std::string &parentChapter)
 {
     // error checking
-    if ( !chapterExists(subchapter) ) {
-        std::cout << "Error: Not found: " << subchapter << std::endl;
-    } if (!chapterExists(parentChapter)) {
-        std::cout << "Error: Not found: " << parentChapter << std::endl;
+    if ( !chapterExists(subchapter)  && !chapterExists(parentChapter) ) {
+        return;
     } else {
         // get pointers
         Chapter *parent = database_.at(parentChapter),
@@ -120,10 +118,15 @@ void Book::printParentsN(Params params) const
                 }
             }
 
-           sort(parents.begin(), parents.end());
-            std::cout << params.at(0) << " has " << stoi(params.at(1)) - num << " parent chapters:" << std::endl;
-            for ( auto parent : parents ) {
-                std::cout << parent << std::endl;
+
+            if ( stoi(params.at(1)) - num > 0 ) {
+                sort(parents.begin(), parents.end());
+                std::cout << params.at(0) << " has " << stoi(params.at(1)) - num << " parent chapters:" << std::endl;
+                for ( auto parent : parents ) {
+                    std::cout << parent << std::endl;
+                }
+            } else {
+                std::cout << params.at(0) << " has no parent chapters:" << std::endl;
             }
         }
     } else {
@@ -159,19 +162,24 @@ void Book::printSubchaptersN(Params params) const
 void Book::printSiblingChapters(Params params) const
 {
     if ( chapterExists( params.at(0) )) {
-        Chapter* parentCh = database_.at(params.at(0))->parentChapter_;
-        std::cout << params.at(0) << " has " << parentCh->subchapters_.size() - 1
-                  << " sibling chapters:" << std::endl;
-        // add ids to vector to print them alphabetically
-        std::vector< std::string > alphabetical;
-        for ( auto ch : parentCh->subchapters_ ) {
-            if ( ch->id_ != params.at(0) ) {
-                alphabetical.push_back(ch->id_);
+        if ( database_.at(params.at(0))->parentChapter_ == nullptr ) {
+            std::cout << params.at(0) << " has no sibling chapters." << std::endl;
+            return;
+        } else {
+            Chapter* parentCh = database_.at(params.at(0))->parentChapter_;
+            std::cout << params.at(0) << " has " << parentCh->subchapters_.size() - 1
+                      << " sibling chapters:" << std::endl;
+            // add ids to vector to print them alphabetically
+            std::vector< std::string > alphabetical;
+            for ( auto ch : parentCh->subchapters_ ) {
+                if ( ch->id_ != params.at(0) ) {
+                    alphabetical.push_back(ch->id_);
+                }
             }
-        }
-        std::sort(alphabetical.begin(), alphabetical.end());
-        for ( auto i : alphabetical ) {
-            std::cout << i << std::endl;
+            std::sort(alphabetical.begin(), alphabetical.end());
+            for ( auto i : alphabetical ) {
+                std::cout << i << std::endl;
+            }
         }
     } else {
         std::cout << "Error: Not found: " << params.at(0) << std::endl;
