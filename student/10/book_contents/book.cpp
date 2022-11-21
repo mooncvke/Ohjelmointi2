@@ -134,7 +134,7 @@ void Book::printParentsN(Params params) const
 void Book::printSubchaptersN(Params params) const
 {
     std::string ch = params.at(0);
-    int num = stoi(params.at(1));
+    // int num = stoi(params.at(1));
     std::vector< std::string > children;
 
     int length = 0;
