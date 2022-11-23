@@ -158,16 +158,18 @@ void Book::printSubchaptersN(Params params) const
 
 void Book::printSiblingChapters(Params params) const
 {
-    auto chapter = findChapter( params.at(0) );
+    auto chapter = findChapter(params.at(0));
     std::vector< std::string > siblings;
-
     if ( chapter != nullptr ) {
-        for ( auto sibling : chapter->parentChapter_->subchapters_ ) {
-            if ( sibling != chapter ) {
-                siblings.push_back(sibling->id_);
+        if ( chapter->parentChapter_ != nullptr ) {
+            for ( auto sibling : chapter->parentChapter_->subchapters_ ) {
+
+                if ( sibling != chapter ) {
+                    siblings.push_back(sibling->id_);
+                }
             }
         }
-        printChapters( siblings, chapter->id_, "sibling");
+        printChapters(siblings, chapter->id_, "sibling");
     }
 }
 
@@ -344,16 +346,16 @@ std::vector<std::string> Book::returnParents(Chapter *chapter, int num) const
 
 void Book::printChapters(std::vector<std::string> chapters, std::string chapter, std::string param ) const
 {
-    sort(chapters.begin(), chapters.end());
     if ( chapters.size() < 1 ) {
         if ( param == "sub" ) {
             std::cout << chapter << " has no " << param << "chapters." << std::endl;
-            return;
+
         } else {
             std::cout << chapter << " has no " << param << " chapters." << std::endl;
-            return;
+
         }
     } else {
+        sort(chapters.begin(), chapters.end());
         if ( param == "sub" ) {
             std::cout << chapter << " has " << chapters.size() << " " << param << "chapters:" << std::endl;
             for ( auto ch : chapters ) {
