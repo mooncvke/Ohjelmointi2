@@ -121,12 +121,12 @@ private:
      * to make things easier and to avoid "copy-paste-coding".
      */
 
-    using Data = std::unordered_map<std::string, Chapter* >;
+    using Data = std::vector< Chapter* >;
     using DataAlphabet = std::map< std::string, Chapter* >;
 
     Data database_;
     // Returns a pointer for ID.
-    Chapter* findChapter(const std::string& id) const;
+    Chapter* findChapter(const std::string& id, bool printError = true ) const;
 
     bool chapterExists(const std::string &id) const;
 
@@ -141,7 +141,11 @@ private:
     void printChaptersRecursive(Chapter *ch, int index, const std::string indent) const;
     void goThroughRecursive(std::vector<Chapter*>, bool open) const;
     int countThroughRecursive(std::vector<Chapter*>, int length) const;
-    DataAlphabet databaseAlphabetical() const;
+    std::vector<std::string> returnParents ( Chapter* chapter, int num ) const;
+    void printChapters(std::vector< std::string > chapters, std::string chapter, std::string param ) const;
+    Chapter* returnSubChapter ( Chapter * chapter ) const;
+
+
     std::pair< int, std::string > longestThroughRecursive(std::vector<Chapter *> subCh, std::pair <int, std::string > result) const;
     std::pair< int, std::string > shortestThroughRecursive(std::vector<Chapter *> subCh, std::pair <int, std::string > result) const;
 };

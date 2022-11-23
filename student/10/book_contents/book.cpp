@@ -8,8 +8,8 @@ Book::Book():
 Book::~Book()
 {
     // free memory
-    for( auto pair : database_ ) {
-        delete pair.second;
+    for( auto chapter : database_ ) {
+        delete chapter;
     }
 }
 
@@ -24,18 +24,21 @@ void Book::addNewChapter(const std::string &id, const std::string &fullName, int
     std::vector<Chapter*> subchapters;
     Chapter* parentChapter = nullptr;
     Chapter *new_ch = new Chapter{id, fullName, length, parentChapter, subchapters};
-    database_.insert( {new_ch->id_, new_ch} );
+    database_.push_back( new_ch );
 }
 
 void Book::addRelation(const std::string &subchapter, const std::string &parentChapter)
 {
-    // error checking
-    if ( !chapterExists(subchapter)  && !chapterExists(parentChapter) ) {
-        return;
-    } else {
         // get pointers
-        Chapter *parent = database_.at(parentChapter),
-                *child = database_.at(subchapter);
+    Chapter *parent = findChapter(parentChapter, false ),
+            *child = findChapter(subchapter, false );
+    // error checking
+    if ( parent == nullptr ) {
+        return;
+    } if ( child == nullptr ) {
+        return;
+    }
+    else {
         // add relation
         parent->subchapters_.push_back(child);
         child->parentChapter_ = parent;
@@ -44,12 +47,18 @@ void Book::addRelation(const std::string &subchapter, const std::string &parentC
 
 void Book::printIds(Params) const
 {
+    std::vector< std::pair<std::string, std::string >> names;
     std::cout << "Book has " << database_.size() << " chapters:" << std::endl;
-    // get database_ in alphabetical order
-    DataAlphabet databaseAlphabet = databaseAlphabetical();
 
-    for ( auto &chapter : databaseAlphabet ) {
-        std::cout << chapter.second->fullName_ << " --- " << chapter.second->id_ << std::endl;
+    for ( auto chapter : database_ ) {
+        names.push_back({chapter->fullName_, chapter->id_});
+    }
+    sort(names.begin(), names.end());
+    for ( auto name : names ) {
+        auto chapter = findChapter(name.second, false);
+        if ( chapter != nullptr ) {
+            std::cout << chapter->fullName_ << " --- " << chapter->id_ << std::endl;
+        }
     }
 }
 
@@ -57,11 +66,11 @@ void Book::printContents(Params) const
 {
     // find main chapters
     std::vector< Chapter* > mainChapters = {};
-    for ( std::pair< std::string, Chapter* > pair : database_ ) {
+    for ( auto chapter : database_ ) {
         // if main chapter -> parent = null
         // doesn't have upper chapter
-        if ( pair.second->parentChapter_ == nullptr ) {
-            mainChapters.push_back(pair.second);
+        if ( chapter->parentChapter_ == nullptr ) {
+            mainChapters.push_back(chapter);
         }
     }
     int index = 1;
@@ -73,145 +82,120 @@ void Book::printContents(Params) const
 
 void Book::close(Params params) const
 {
-    if ( chapterExists( params.at(0)) ) {
-        database_.at(params.at(0))->open_ = false;
-        goThroughRecursive(database_.at(params.at(0))->subchapters_, false);
-    } else {
-        std::cout << "Error: Not found: " << params.at(0) << std::endl;
+    auto chapter = findChapter( params.at(0) );
+
+    if ( chapter != nullptr ) {
+        chapter->open_ = false;
+        goThroughRecursive(chapter->subchapters_, false);
     }
 }
 
 void Book::open(Params params) const
 {
-    if ( chapterExists( params.at(0)) ) {
-        database_.at(params.at(0))->open_ = true;
-    } else {
-        std::cout << "Error: Not found: " << params.at(0) << std::endl;
+    auto chapter = findChapter( params.at(0) );
+
+    if ( chapter != nullptr ) {
+        chapter->open_ = true;
     }
 }
 
 void Book::openAll(Params ) const
 {
     for ( auto chapter : database_ ) {
-        database_.at(chapter.first)->open_ = true;
-        goThroughRecursive(chapter.second->subchapters_, true);
+        chapter->open_ = true;
+        goThroughRecursive(chapter->subchapters_, true);
     }
 }
 
 void Book::printParentsN(Params params) const
 {
-    if ( chapterExists( params.at(0) )) {
-        std::string ch = params.at(0);
-        int num = stoi(params.at(1));
-        std::vector< std::string > parents;
+    auto chapter = findChapter( params.at(0) );
+    int num = stoi(params.at(1));
+    std::vector< std::string > parents;
 
+    if ( chapter != nullptr ) {
         if ( num < 1 ) {
             std::cout << "Error. Level can't be less than 1." << std::endl;
         } else {
-            while ( num > 0 ) {
-                    if ( database_.at(ch)->parentChapter_ != nullptr ) {
-                        parents.push_back(database_.at(ch)->parentChapter_->id_);
-                        ch = database_.at(ch)->parentChapter_->id_;
-                        num--;
-                    } else {
-                        break;
-                }
-            }
-
-
-            if ( stoi(params.at(1)) - num > 0 ) {
-                sort(parents.begin(), parents.end());
-                std::cout << params.at(0) << " has " << stoi(params.at(1)) - num << " parent chapters:" << std::endl;
-                for ( auto parent : parents ) {
-                    std::cout << parent << std::endl;
-                }
-            } else {
-                std::cout << params.at(0) << " has no parent chapters:" << std::endl;
-            }
+            parents = returnParents( chapter, num );
+            printChapters( parents, chapter->id_, "parent");
         }
-    } else {
-        std::cout << "Error: Not found: " << params.at(0) << std::endl;
     }
 }
 
 void Book::printSubchaptersN(Params params) const
 {
-    std::string ch = params.at(0);
-    // int num = stoi(params.at(1));
+    auto chapter = findChapter( params.at(0) );
+    int num = stoi(params.at(1));
     std::vector< std::string > children;
+    auto ogCh = chapter;
 
-    int length = 0;
-    length += database_.at(params.at(0))->length_;
-    std::string id = "";
-    id = database_.at(params.at(0))->id_;
-    std::pair< int, std::string > result = {length, id};
+    if ( chapter != nullptr ) {
+        if ( num < 1 ) {
+            std::cout << "Error. Level can't be less than 1." << std::endl;
+        } else {
+            while ( num > 0 ) {
+                // has subchapters
+                if ( chapter->subchapters_.size() > 0 ) {
+                    for ( auto subCh : chapter->subchapters_ ) {
+                        children.push_back(subCh->id_);
+                        if ( subCh->subchapters_.size() > 0 ) {
+                            chapter = subCh;
+                        }
+                    }
+                    if ( chapter == ogCh ) break;
+                    num--;
+                } else {
+                    break;
+                }
 
-    for ( auto subCh : database_.at(params.at(0))->subchapters_ ) {
-        if ( subCh->length_ > result.first ) {
-            result.first = subCh->length_;
-            result.second = subCh->id_;
+            }
+            // pritn children
+            printChapters( children, ogCh->id_, "sub");
         }
-        result = longestThroughRecursive(subCh->subchapters_, result);
     }
-    std::vector<std::string> res;
-    res.push_back(result.second);
-    res.push_back((std::to_string(result.first)));
-    printParentsN(res);
 }
 
 void Book::printSiblingChapters(Params params) const
 {
-    if ( chapterExists( params.at(0) )) {
-        if ( database_.at(params.at(0))->parentChapter_ == nullptr ) {
-            std::cout << params.at(0) << " has no sibling chapters." << std::endl;
-            return;
-        } else {
-            Chapter* parentCh = database_.at(params.at(0))->parentChapter_;
-            std::cout << params.at(0) << " has " << parentCh->subchapters_.size() - 1
-                      << " sibling chapters:" << std::endl;
-            // add ids to vector to print them alphabetically
-            std::vector< std::string > alphabetical;
-            for ( auto ch : parentCh->subchapters_ ) {
-                if ( ch->id_ != params.at(0) ) {
-                    alphabetical.push_back(ch->id_);
-                }
-            }
-            std::sort(alphabetical.begin(), alphabetical.end());
-            for ( auto i : alphabetical ) {
-                std::cout << i << std::endl;
+    auto chapter = findChapter( params.at(0) );
+    std::vector< std::string > siblings;
+
+    if ( chapter != nullptr ) {
+        for ( auto sibling : chapter->parentChapter_->subchapters_ ) {
+            if ( sibling != chapter ) {
+                siblings.push_back(sibling->id_);
             }
         }
-    } else {
-        std::cout << "Error: Not found: " << params.at(0) << std::endl;
+        printChapters( siblings, chapter->id_, "sibling");
     }
 }
 
 void Book::printTotalLength(Params params) const
 {
-    if ( chapterExists( params.at(0) )) {
-        int length = 0;
-        length += database_.at(params.at(0))->length_;
+    auto chapter = findChapter(params.at(0));
+    if ( chapter != nullptr ) {
+        int length = chapter->length_;
 
-        for ( auto subCh : database_.at(params.at(0))->subchapters_ ) {
+        for ( auto subCh : chapter->subchapters_ ) {
             length += subCh->length_;
             length = countThroughRecursive(subCh->subchapters_, length);
         }
         std::cout << "Total length of " << params.at(0) << " is " << length << "." << std::endl;
-    } else {
-        std::cout << "Error: Not found: " << params.at(0) << std::endl;
     }
 }
 
 void Book::printLongestInHierarchy(Params params) const
 {
-    if ( chapterExists( params.at(0) )) {
+    auto chapter = findChapter(params.at(0));
+    if ( chapter != nullptr ) {
         int length = 0;
-        length += database_.at(params.at(0))->length_;
+        length += chapter->length_;
         std::string id = "";
-        id = database_.at(params.at(0))->id_;
+        id = chapter->id_;
         std::pair< int, std::string > result = {length, id};
 
-        for ( auto subCh : database_.at(params.at(0))->subchapters_ ) {
+        for ( auto subCh : chapter->subchapters_ ) {
             if ( subCh->length_ > result.first ) {
                 result.first = subCh->length_;
                 result.second = subCh->id_;
@@ -220,21 +204,20 @@ void Book::printLongestInHierarchy(Params params) const
         }
         std::cout << "With the length of " << result.first << ", " << result.second
                   << " is the longest in " << params.at(0) << "'s hierarchy." << std::endl;
-    } else {
-        std::cout << "Error: Not found: " << params.at(0) << std::endl;
     }
 }
 
 void Book::printShortestInHierarchy(Params params) const
 {
-    if ( chapterExists( params.at(0) )) {
+    auto chapter = findChapter(params.at(0));
+    if ( chapter != nullptr ) {
         int length = 0;
-        length += database_.at(params.at(0))->length_;
+        length += chapter->length_;
         std::string id = "";
-        id = database_.at(params.at(0))->id_;
+        id = chapter->id_;
         std::pair< int, std::string > result = {length, id};
 
-        for ( auto subCh : database_.at(params.at(0))->subchapters_ ) {
+        for ( auto subCh : chapter->subchapters_ ) {
             if ( subCh->length_ < result.first ) {
                 result.first = subCh->length_;
                 result.second = subCh->id_;
@@ -243,8 +226,6 @@ void Book::printShortestInHierarchy(Params params) const
         }
         std::cout << "With the length of " << result.first << ", " << result.second
                   << " is the shortest in " << params.at(0) << "'s hierarchy." << std::endl;
-    } else {
-        std::cout << "Error: Not found: " << params.at(0) << std::endl;
     }
 }
 
@@ -258,19 +239,33 @@ void Book::printSubchapters(Params) const
 
 }
 
-Chapter *Book::findChapter(const std::string &id) const
+Chapter *Book::findChapter(const std::string &id, bool printError ) const
 {
     Chapter *ptr = nullptr;
-    // check if id exists
-    if ( chapterExists(id) ) {
-        ptr = database_.at(id);
+    for ( auto chapter : database_ ) {
+        // check if id exists
+        if ( chapter->id_ == id ) {
+            ptr = chapter;
+        }
+    }
+    if ( printError == true ) {
+        if ( ptr == nullptr ) {
+            std::cout << "Error: Not found: " << id << std::endl;
+        }
     }
     return ptr;
 }
 
 bool Book::chapterExists(const std::string &id) const
 {
-    return database_.find(id) != database_.end();
+    for ( auto chapter : database_ ) {
+        if ( chapter->id_ == id ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    return false;
 }
 
 void Book::printGroup(const std::string&, const std::string&, const IdSet&) const
@@ -295,7 +290,7 @@ void Book::printChaptersRecursive(Chapter *ch, int index, const std::string inde
               << " ( " << ch->length_ << " )" << std::endl;
 
     // has no subchapters
-    if ( !ch->open_ || ch->subchapters_.empty( )) { return; }
+    if ( !ch->open_ || ch->subchapters_.empty()) { return; }
 
     // iterate through subchapters
     index = 1;
@@ -307,10 +302,11 @@ void Book::printChaptersRecursive(Chapter *ch, int index, const std::string inde
 
 void Book::goThroughRecursive(std::vector<Chapter*> subCh, bool open ) const
 {
+
     if ( subCh.size() > 0 ) {
         for ( auto *subchapter : subCh) {
             if ( subchapter->subchapters_.size() > 0 ) {
-                database_.at(subchapter->id_)->open_ = open;
+                subchapter->open_ = open;
                 goThroughRecursive(subchapter->subchapters_, open);
             }
         }
@@ -320,14 +316,68 @@ void Book::goThroughRecursive(std::vector<Chapter*> subCh, bool open ) const
 int Book::countThroughRecursive(std::vector<Chapter *> subCh, int length) const
 {
     if ( subCh.size() > 0 ) {
-        for ( auto *subchapter : subCh) {
-            if ( subchapter->subchapters_.size() > 0 ) {
-                length += subchapter->length_;
-                countThroughRecursive(subchapter->subchapters_, length);
+        for ( auto subchapter : subCh) {
+            length += subchapter->length_;
+            countThroughRecursive(subchapter->subchapters_, length);
+        }
+    }
+
+    return length;
+}
+
+std::vector<std::string> Book::returnParents(Chapter *chapter, int num) const
+{
+    std::vector< std::string > parents;
+    while ( num > 0 ) {
+        // has parentchapter
+        if ( chapter->parentChapter_ != nullptr ) {
+                // add parent to parents vector
+                parents.push_back(chapter->parentChapter_->id_);
+                chapter = chapter->parentChapter_;
+                num--;
+            } else {
+                break;
+        }
+    }
+    return parents;
+}
+
+void Book::printChapters(std::vector<std::string> chapters, std::string chapter, std::string param ) const
+{
+    sort(chapters.begin(), chapters.end());
+    if ( chapters.size() < 1 ) {
+        if ( param == "sub" ) {
+            std::cout << chapter << " has no " << param << "chapters." << std::endl;
+            return;
+        } else {
+            std::cout << chapter << " has no " << param << " chapters." << std::endl;
+            return;
+        }
+    } else {
+        if ( param == "sub" ) {
+            std::cout << chapter << " has " << chapters.size() << " " << param << "chapters:" << std::endl;
+            for ( auto ch : chapters ) {
+                std::cout << ch << std::endl;
+            }
+        } else {
+            std::cout << chapter << " has " << chapters.size() << " " << param << " chapters:" << std::endl;
+            for ( auto ch : chapters ) {
+                std::cout << ch << std::endl;
             }
         }
-    } else { return length; }
-    return length;
+
+    }
+}
+
+Chapter* Book::returnSubChapter(Chapter *chapter) const
+{
+    for ( auto subChapter : chapter->subchapters_ ) {
+        chapter = subChapter;
+        if ( subChapter->subchapters_.size() > 0 ) {
+            returnSubChapter(chapter);
+        }
+    }
+    return chapter;
 }
 
 std::pair< int, std::string > Book::longestThroughRecursive(std::vector<Chapter *> subCh, std::pair <int, std::string > result) const
@@ -364,13 +414,4 @@ std::pair<int, std::string> Book::shortestThroughRecursive(std::vector<Chapter *
     return result;
 }
 
-std::map<std::string, Chapter *> Book::databaseAlphabetical() const
-{
-    DataAlphabet databaseAlphabetical;
-
-    for (auto &chapter : database_) {
-        databaseAlphabetical.insert( {chapter.first, chapter.second} );
-    }
-    return databaseAlphabetical;
-}
 
