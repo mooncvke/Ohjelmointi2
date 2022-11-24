@@ -1,3 +1,19 @@
+/* COMP.CS.110 Project 3: Book contents
+ * Description:
+ * Program gets book's table of contents from a file and user can find out info
+ * about the book with different commands. In this book.cpp file these commands
+ * are executed an they are: IDS, CONTENTS, CLOSE <ID>, OPEN <ID>, OPEN_ALL,
+ * PARENTS <ID> <N>, SUBCHAPTERS <ID> <N>, SIBLINGS <ID>, LENGTH <ID>, LONGEST <ID>,
+ * SHORTEST <ID>. More specific descriptions of all the commands are found from
+ * book.hh file in functions that executes them.
+
+* Program author
+* Name: Tuuli Silvennoinen
+* Student number: 150185558
+* UserID: kftusi
+* E-Mail: tuuli.silvennoinen@tuni.fi
+*/
+
 #include "book.hh"
 
 Book::Book():
@@ -18,9 +34,8 @@ void Book::addNewChapter(const std::string &id, const std::string &fullName, int
     // check if chapter with given id already exists -> print error message
     if ( chapterExists(id)) {
         std::cout << "Error: Already exists." << std::endl;
-        return;
     }
-    // create and add a new chapter
+    // create and add a new chapter to the database_
     std::vector<Chapter*> subchapters;
     Chapter* parentChapter = nullptr;
     Chapter *new_ch = new Chapter{id, fullName, length, parentChapter, subchapters};
@@ -29,7 +44,7 @@ void Book::addNewChapter(const std::string &id, const std::string &fullName, int
 
 void Book::addRelation(const std::string &subchapter, const std::string &parentChapter)
 {
-        // get pointers
+    // get pointers
     Chapter *parent = findChapter(parentChapter, false ),
             *child = findChapter(subchapter, false );
     // error checking
@@ -50,15 +65,14 @@ void Book::printIds(Params) const
     std::vector< std::pair<std::string, std::string >> names;
     std::cout << "Book has " << database_.size() << " chapters:" << std::endl;
 
+    // go through database_ and add every chapter's name and id to the names vector
     for ( auto chapter : database_ ) {
-        names.push_back({chapter->fullName_, chapter->id_});
+        names.push_back( {chapter->fullName_, chapter->id_} );
     }
+    // sort vector to alphabetical order and go through it to print chapters
     sort(names.begin(), names.end());
-    for ( auto name : names ) {
-        auto chapter = findChapter(name.second, false);
-        if ( chapter != nullptr ) {
-            std::cout << chapter->fullName_ << " --- " << chapter->id_ << std::endl;
-        }
+    for ( auto &name : names ) {
+        std::cout << name.first << " --- " << name.second << std::endl;
     }
 }
 
@@ -67,12 +81,13 @@ void Book::printContents(Params) const
     // find main chapters
     std::vector< Chapter* > mainChapters = {};
     for ( auto chapter : database_ ) {
-        // if main chapter -> parent = null
-        // doesn't have upper chapter
+        // if chapter is a main chapter it doesn't have a parent chapter.
+        // if chapter doesn't have parent chapter add it to mainChapters-vector
         if ( chapter->parentChapter_ == nullptr ) {
             mainChapters.push_back(chapter);
         }
     }
+    // print table of contents with printChaptersRecursive-function
     int index = 1;
     for ( Chapter *ptr : mainChapters ) {
         printChaptersRecursive(ptr, index, " ");
@@ -82,8 +97,9 @@ void Book::printContents(Params) const
 
 void Book::close(Params params) const
 {
+    // if chapter exists, close chapter and close all of its subchapters with
+    // goThroughRecursive-function by changing open_value to false
     auto chapter = findChapter( params.at(0) );
-
     if ( chapter != nullptr ) {
         chapter->open_ = false;
         goThroughRecursive(chapter->subchapters_, false);
@@ -92,8 +108,8 @@ void Book::close(Params params) const
 
 void Book::open(Params params) const
 {
+    // if chapter exists open it by changing open_-value to true
     auto chapter = findChapter( params.at(0) );
-
     if ( chapter != nullptr ) {
         chapter->open_ = true;
     }
@@ -101,6 +117,7 @@ void Book::open(Params params) const
 
 void Book::openAll(Params ) const
 {
+    // go through database_ and open every chapter by changing open_-value to true
     for ( auto chapter : database_ ) {
         chapter->open_ = true;
         goThroughRecursive(chapter->subchapters_, true);
@@ -114,10 +131,14 @@ void Book::printParentsN(Params params) const
     std::vector< std::string > parents;
 
     if ( chapter != nullptr ) {
+        // if user gives value for level that is less than 1 print error-message
         if ( num < 1 ) {
             std::cout << "Error. Level can't be less than 1." << std::endl;
-        } else {
-            parents = returnParents( chapter, num );
+        }
+        // get parent chapters with getParents-function and print parentchapters
+        // with printChapters-function
+        else {
+            parents = getParents( chapter, num );
             printChapters( parents, chapter->id_, "parent");
         }
     }
@@ -131,29 +152,32 @@ void Book::printSubchaptersN(Params params) const
     auto ogCh = chapter;
 
     if ( chapter != nullptr ) {
+        // if user gives value for level that is less than 1 print error-message
         if ( num < 1 ) {
             std::cout << "Error. Level can't be less than 1." << std::endl;
         } else {
             while ( num > 0 ) {
-                // has subchapters
+                auto ogChapter = chapter;
+                // check if chapter has subchapters
                 if ( chapter->subchapters_.size() > 0 ) {
                     for ( auto subCh : chapter->subchapters_ ) {
-                        // not in vector
-                        if ( find(children.begin(), children.end(), subCh->id_ ) == children.end() ) {
                             children.push_back(subCh->id_);
-                        }
+                        // if subCh has subchapter, subCh will be chapter
+                        // in next round of the loop
                         if ( subCh->subchapters_.size() > 0 ) {
                             chapter = subCh;
                         }
                     }
-                    if ( chapter == ogCh ) break;
+                    // if chapter is same as it was beginning of this round of the loop
+                    // meaning none of chapter's subchapters had any subchapters
+                    // and loop breaks
+                    if ( chapter == ogChapter ) break;
                     num--;
                 } else {
                     break;
                 }
-
             }
-            // pritn children
+            // print subchapters using printChapters-function
             printChapters( children, ogCh->id_, "sub");
         }
     }
@@ -164,14 +188,17 @@ void Book::printSiblingChapters(Params params) const
     auto chapter = findChapter(params.at(0));
     std::vector< std::string > siblings;
     if ( chapter != nullptr ) {
+        // if chapter has a parent chapter it has sibling chapters
         if ( chapter->parentChapter_ != nullptr ) {
+            // go through chapter's parent chapter's subchapters (=sibling chapters)
             for ( auto sibling : chapter->parentChapter_->subchapters_ ) {
-
+                // chapter itself is not added to the vector
                 if ( sibling != chapter ) {
                     siblings.push_back(sibling->id_);
                 }
             }
         }
+        // print siblings using printChapters-functions
         printChapters(siblings, chapter->id_, "sibling");
     }
 }
@@ -180,27 +207,26 @@ void Book::printTotalLength(Params params) const
 {
     auto chapter = findChapter(params.at(0));
     if ( chapter != nullptr ) {
+        // get total length of chapter and its subchapters with
+        // countThroughRecursive-function
         int length = chapter->length_;
         length = countThroughRecursive(chapter->subchapters_, length);
 
-        std::cout << "Total length of " << params.at(0) << " is " << length << "." << std::endl;
+        std::cout << "Total length of " << params.at(0) << " is "
+                  << length << "." << std::endl;
     }
 }
 
 void Book::printLongestInHierarchy(Params params) const
 {
     auto chapter = findChapter(params.at(0));
-
     if ( chapter != nullptr ) {
+        // first longest chapter is the first chapter in hierarchy (chapter given by user)
+        // find longest chapter using longestAndShortestThroughRecursive-function
         std::pair< int, std::string > result = {chapter->length_, chapter->id_};
-        result = longestThroughRecursive(chapter->subchapters_, result);
-        if ( result.second == chapter->id_ ) {
-            std::cout << "With the length of " << result.first << ", " << result.second
-                      << " is the longest chapter in their hierarchy." << std::endl;
-        } else {
-            std::cout << "With the length of " << result.first << ", " << result.second
-                      << " is the longest chapter in " << params.at(0) << "'s hierarchy." << std::endl;
-        }
+        result = longestAndShortest(chapter->subchapters_, result, "longest");
+        // print with printLongestAndShortest-function
+        printLongestAndShortest(result, chapter->id_, "longest");
     }
 }
 
@@ -208,33 +234,18 @@ void Book::printShortestInHierarchy(Params params) const
 {
     auto chapter = findChapter(params.at(0));
     if ( chapter != nullptr ) {
-        int length = 0;
-        length += chapter->length_;
-        std::string id = "";
-        id = chapter->id_;
-        std::pair< int, std::string > result = {length, id};
-
-        for ( auto subCh : chapter->subchapters_ ) {
-            if ( subCh->length_ < result.first ) {
-                result.first = subCh->length_;
-                result.second = subCh->id_;
-            }
-            result = shortestThroughRecursive(subCh->subchapters_, result);
-        }
-        std::cout << "With the length of " << result.first << ", " << result.second
-                  << " is the shortest chapter in their hierarchy." << std::endl;
+        // first shortest chapter is the first chapter in hierarchy (chapter given by user)
+        // find shortest chapter using longestThroughRecursive-function
+        std::pair< int, std::string > result = {chapter->length_, chapter->id_};
+        result = longestAndShortest(chapter->subchapters_, result, "shortest");
+        // print with printLongestAndShortest-function
+        printLongestAndShortest(result, chapter->id_, "shortest");
     }
 }
 
-void Book::printParent(Params) const
-{
+void Book::printParent(Params) const {}
 
-}
-
-void Book::printSubchapters(Params) const
-{
-
-}
+void Book::printSubchapters(Params) const {}
 
 Chapter *Book::findChapter(const std::string &id, bool printError ) const
 {
@@ -245,17 +256,20 @@ Chapter *Book::findChapter(const std::string &id, bool printError ) const
             ptr = chapter;
         }
     }
+    // print error-message if printError is true and chapter wasn't found
     if ( printError == true ) {
         if ( ptr == nullptr ) {
             std::cout << "Error: Not found: " << id << std::endl;
         }
     }
+    // return pointer to the chapter, if chapter isn't found pointer is nullptr
     return ptr;
 }
 
 bool Book::chapterExists(const std::string &id) const
 {
     for ( auto chapter : database_ ) {
+        // if chapter exists, return true. if it doesn't exist return false
         if ( chapter->id_ == id ) {
             return true;
         } else {
@@ -265,31 +279,18 @@ bool Book::chapterExists(const std::string &id) const
     return false;
 }
 
-void Book::printGroup(const std::string&, const std::string&, const IdSet&) const
-{
-
-}
-
-IdSet Book::vectorToIdSet(const std::vector<Chapter *> &container) const
-{
-    IdSet ids = {};
-    for ( Chapter *ptr : container ) {
-        ids.insert(ptr->id_);
-    }
-    return ids;
-}
-
 void Book::printChaptersRecursive(Chapter *ch, int index, const std::string indent) const
 {
+    // if chapter is open, sign is '-' and if it's not open sign is '+'
     char sign = ch->open_ ? '-' : '+';
 
     std::cout << sign << indent << index << ". " << ch->fullName_
               << " ( " << ch->length_ << " )" << std::endl;
 
-    // has no subchapters
+    // if chapter has no subchapters
     if ( !ch->open_ || ch->subchapters_.empty()) { return; }
 
-    // iterate through subchapters
+    // iterate through subchapters and print them using this same function
     index = 1;
     for ( Chapter *subch : ch->subchapters_ ) {
         printChaptersRecursive(subch, index, indent + "  ");
@@ -297,13 +298,14 @@ void Book::printChaptersRecursive(Chapter *ch, int index, const std::string inde
     }
 }
 
-void Book::goThroughRecursive(std::vector<Chapter*> subCh, bool open ) const
+void Book::goThroughRecursive(std::vector<Chapter*> subChapter, bool open ) const
 {
-
-    if ( subCh.size() > 0 ) {
-        for ( auto *subchapter : subCh) {
+    if ( subChapter.size() > 0 ) {
+        // go through subChapter's subchapters and change their open_-value to
+        // the value given in open-parameter
+        for ( auto subchapter : subChapter ) {
+            subchapter->open_ = open;
             if ( subchapter->subchapters_.size() > 0 ) {
-                subchapter->open_ = open;
                 goThroughRecursive(subchapter->subchapters_, open);
             }
         }
@@ -313,100 +315,119 @@ void Book::goThroughRecursive(std::vector<Chapter*> subCh, bool open ) const
 int Book::countThroughRecursive(std::vector<Chapter *> subCh, int length) const
 {
     if ( subCh.size() > 0 ) {
+        // go through subchapters and add them to the length
         for ( auto subchapter : subCh) {
             length += subchapter->length_;
             length = countThroughRecursive(subchapter->subchapters_, length);
         }
     }
-
+    // return total length
     return length;
 }
 
-std::vector<std::string> Book::returnParents(Chapter *chapter, int num) const
+std::vector<std::string> Book::getParents(Chapter *chapter, int num) const
 {
     std::vector< std::string > parents;
     while ( num > 0 ) {
-        // has parentchapter
+        // if chapter has parentchapter add parentchapter to parents-vector and give
+        // chapter-variable value of parentChapter. if chapter doesn't have parent
+        // chapter, loop will stop
         if ( chapter->parentChapter_ != nullptr ) {
-                // add parent to parents vector
                 parents.push_back(chapter->parentChapter_->id_);
                 chapter = chapter->parentChapter_;
                 num--;
-            } else {
-                break;
+        } else {
+            break;
         }
     }
     return parents;
 }
 
-void Book::printChapters(std::vector<std::string> chapters, std::string chapter, std::string param ) const
+void Book::printChapters(std::vector<std::string> &chapters,
+                         std::string &chapterId, std::string param ) const
 {
+    // if chapters-vector's size is smaller than 1, it doesn't have any chapters
     if ( chapters.size() < 1 ) {
+        // if to be printed is amount of subchapters, there's no space
+        // between param and "chapter" other two possibilities with this
+        // function ( parent chapters and sibling chapters ) are written with space
         if ( param == "sub" ) {
-            std::cout << chapter << " has no " << param << "chapters." << std::endl;
-
+            std::cout << chapterId << " has no " << param << "chapters." << std::endl;
         } else {
-            std::cout << chapter << " has no " << param << " chapters." << std::endl;
-
+            std::cout << chapterId << " has no " << param << " chapters." << std::endl;
         }
     } else {
+        // vector is sorted to get chapters in alphabetical order. print chapters
+        // with loop
         sort(chapters.begin(), chapters.end());
+        // subchapter is written without space
         if ( param == "sub" ) {
-            std::cout << chapter << " has " << chapters.size() << " " << param << "chapters:" << std::endl;
-            for ( auto ch : chapters ) {
+            std::cout << chapterId << " has " << chapters.size() << " "
+                      << param << "chapters:" << std::endl;
+            for ( auto &ch : chapters ) {
                 std::cout << ch << std::endl;
             }
         } else {
-            std::cout << chapter << " has " << chapters.size() << " " << param << " chapters:" << std::endl;
-            for ( auto ch : chapters ) {
+            std::cout << chapterId << " has " << chapters.size() << " "
+                      << param << " chapters:" << std::endl;
+            for ( auto &ch : chapters ) {
                 std::cout << ch << std::endl;
             }
         }
-
     }
 }
 
-Chapter* Book::returnSubChapter(Chapter *chapter) const
-{
-    for ( auto subChapter : chapter->subchapters_ ) {
-        chapter = subChapter;
-        if ( subChapter->subchapters_.size() > 0 ) {
-            returnSubChapter(chapter);
-        }
-    }
-    return chapter;
-}
 
-std::pair< int, std::string > Book::longestThroughRecursive(std::vector<Chapter *> subCh, std::pair <int, std::string > result) const
+
+std::pair< int, std::string > Book::longestAndShortest(std::vector<Chapter *> subCh,
+                                                       std::pair <int, std::string> result,
+                                                       std::string param) const
 {
     if ( subCh.size() > 0 ) {
-        for ( auto subchapter : subCh) {
-            if ( subchapter->length_ > result.first ) {
-
-                result.first = subchapter->length_;
-                result.second = subchapter->id_;
+        // if param is "longest", is meant to find out the longest chapter
+        if ( param == "longest" ) {
+            // go through subchapters and if chapter is longer than length(=result.first)
+            // its length becames the new length
+            for ( auto subchapter : subCh) {
+                if ( subchapter->length_ > result.first ) {
+                    result.first = subchapter->length_;
+                    result.second = subchapter->id_;
+                }
+                result = longestAndShortest(subchapter->subchapters_,
+                                            result, param);
             }
-            result = longestThroughRecursive(subchapter->subchapters_, result);
+        }
+        // if param is "shortest", is meant to find out the shortest chapter
+        if ( param == "shortest" ) {
+            // go through subchapters and if chapter is shorter than length(=result.first)
+            // its length becames the new length
+            for ( auto subchapter : subCh) {
+                if ( subchapter->length_ < result.first ) {
+                    result.first = subchapter->length_;
+                    result.second = subchapter->id_;
+                }
+                if ( subchapter->subchapters_.size() > 0 ) {
+                    result = longestAndShortest(subchapter->subchapters_,
+                                                result, param);
+                }
+            }
         }
     }
+    // return result that contains the length and ID of the longest/shortest chapter
     return result;
 }
 
-std::pair<int, std::string> Book::shortestThroughRecursive(std::vector<Chapter *> subCh, std::pair<int, std::string> result) const
+void Book::printLongestAndShortest(std::pair<int, std::string> result,
+                                   std::string chapterId, std::string param) const
 {
-    if ( subCh.size() > 0 ) {
-        for ( auto subchapter : subCh) {
-            if ( subchapter->length_ < result.first ) {
-
-                result.first = subchapter->length_;
-                result.second = subchapter->id_;
-            }
-            if ( subchapter->subchapters_.size() > 0 ) {
-                longestThroughRecursive(subchapter->subchapters_, result);
-            }
-        }
-    } else { return result; }
-    return result;
+    // longest/shortest chapter is same chapter that was given by user
+    if ( result.second == chapterId ) {
+        std::cout << "With the length of " << result.first << ", "
+                  << result.second << " is the " << param << " chapter in their"
+                  << " hierarchy." << std::endl;
+    } else {
+        std::cout << "With the length of " << result.first << ", "
+                  << result.second << " is the " << param << " chapter in "
+                  << chapterId << "'s hierarchy." << std::endl;
+    }
 }
-
-

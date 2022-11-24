@@ -1,15 +1,21 @@
-/*
-#############################################################################
-# COMP.CS.110 Programming 2: Autumn 2022                                    #
-# Project3: Book contents                                                   #
-# File: book.hh                                                             #
-# Description: Class describing book chapter hierarchy                      #
-#       Datastructure is populated with Chapter-structs and provides some   #
-#       query-functions.                                                    #
-# Notes: * This is a part of an exercise program                            #
-#        * Student's aren't allowed to alter public interface!              #
-#        * All changes to private side are allowed.                         #
-#############################################################################
+/* COMP.CS.110 Project 3: Book contents
+ * Description:
+ * Program gets book's table of contents from a file and user can find out info
+ * about the book with different commands. This header book.hh file contains
+ * definitions for class Book and it's functions, few constants to improve
+ * readability in other modules and structure for a chapter that is used on class
+ * Book.
+ *
+ * Functions defined in public part executes commands given by user. Functions
+ * in private part are used to help execute commands. Functions in private part
+ * get in their parameters a vector of strings which are parameters user gave for
+ * particular command.
+ *
+ * Program author
+ * Name: Tuuli Silvennoinen
+ * Student number: 150185558
+ * UserID: kftusi
+ * E-Mail: tuuli.silvennoinen@tuni.fi
 */
 
 #ifndef BOOK_HH
@@ -39,11 +45,10 @@ struct Chapter
     std::string id_ = EMPTY;
     std::string fullName_ = EMPTY;
     int length_ = 0;
-    Chapter* parentChapter_ = nullptr; // yläkappaleen osoite
-    std::vector<Chapter*> subchapters_; // vektori koostuu alakappaleiden osoitteista
+    Chapter* parentChapter_ = nullptr;
+    std::vector<Chapter*> subchapters_;
     bool open_ = true;
 };
-
 
 using IdSet = std::set<std::string>;
 
@@ -115,39 +120,61 @@ public:
     void printSubchapters(Params params) const;
 
 private:
-    /* The following functions are meant to make project easier.
-     * You can implement them if you want and/or create your own.
-     * Anyway it would be a good idea to implement more functions
-     * to make things easier and to avoid "copy-paste-coding".
-     */
-
+    // datastructure to save chapters
     using Data = std::vector< Chapter* >;
-    using DataAlphabet = std::map< std::string, Chapter* >;
-
     Data database_;
-    // Returns a pointer for ID.
+
+    // Returns a pointer for chapter ID. Parameters are chapter ID as string and boolean
+    // value which determines if error message is printed if chapter doesn't exist.
     Chapter* findChapter(const std::string& id, bool printError = true ) const;
 
+    // Checks if chapter exists, parameter is chapter ID. Function
+    // returns true if chapter can be found from datastructure
     bool chapterExists(const std::string &id) const;
 
-    // Prints the the data in a container.
-    void printGroup(const std::string& id, const std::string& group,
-                    const IdSet& container) const;
-
-    // Turns a vector of chapters to a set of IDs.
-    // Needed only for printSubchapters.
-    IdSet vectorToIdSet(const std::vector<Chapter*>& container) const;
-
+    // Prints all chapters as table of contents. Used in printContents-function.
+    // Parameters are chapter pointer, index that counts chapters to print correct
+    // number in front of chapter and indent that prints correct amount of
+    // spaces in front of chapter name
     void printChaptersRecursive(Chapter *ch, int index, const std::string indent) const;
-    void goThroughRecursive(std::vector<Chapter*>, bool open) const;
-    int countThroughRecursive(std::vector<Chapter*>, int length) const;
-    std::vector<std::string> returnParents ( Chapter* chapter, int num ) const;
-    void printChapters(std::vector< std::string > chapters, std::string chapter, std::string param ) const;
-    Chapter* returnSubChapter ( Chapter * chapter ) const;
 
+    // Goes through chapters and opens or closes them by changing value of open
+    // variable. Used with close- and openAll-functions. Parameters are vector
+    // of chapter pointers and boolean value which determines if chapter is
+    // opened or closed.
+    void goThroughRecursive(std::vector<Chapter*> chapters, bool open) const;
 
-    std::pair< int, std::string > longestThroughRecursive(std::vector<Chapter *> subCh, std::pair <int, std::string > result) const;
-    std::pair< int, std::string > shortestThroughRecursive(std::vector<Chapter *> subCh, std::pair <int, std::string > result) const;
+    // Goes through chapters and counts their total length. Used with
+    // printTotalLength-function. Parameters are vector of chapter pointers
+    // and length of chapters. Function returns total length of chapters.
+    int countThroughRecursive(std::vector<Chapter*> chapters, int length) const;
+
+    // Get parent chapters of chapter. Parameters are chapter pointer and number
+    // of how many levels of parents are wanted. Function returns vector of parent's IDs.
+    std::vector<std::string> getParents ( Chapter* chapter, int num ) const;
+
+    // Print chapters. Used with printParentsN-, printSubChaptersN- and
+    // printSiblingChapters-functions. Parameters are vector of chapters to be printed
+    // and id of chapter to which printed chapters are related to.
+    void printChapters(std::vector< std::string > &chapters, std::string &chapterId,
+                       std::string param ) const;
+
+    // Get longest/shortest chapter. Used in printLongestInHierarchy- and
+    // printShortestInHierarchy-functions. Parameters are vector of chapter pointers,
+    // pair of result( longest/shortest chapter at that point )
+    // that contains length and ID of the chapter. Returns final result which is
+    // the longest/shortest chapter and it's length and ID.
+    std::pair< int, std::string > longestAndShortest(std::vector<Chapter *> subCh,
+                                                     std::pair <int, std::string > result,
+                                                     std::string param ) const;
+
+    // print longest/shorterst chapter and it's length. Used in printLongestInHierarchy-
+    // and printShortestInHierarchy-functions. Parameters are result that
+    // is get with longestAndShortest-function, chapter that is the original chapter
+    // given by user and param that is "shortest" or "longest" determineting
+    // which one is wanted
+    void printLongestAndShortest(std::pair< int, std::string > result,
+                                 std::string chapter, std::string param ) const;
 };
 
 #endif // BOOK_HH
