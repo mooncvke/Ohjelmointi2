@@ -138,7 +138,10 @@ void Book::printSubchaptersN(Params params) const
                 // has subchapters
                 if ( chapter->subchapters_.size() > 0 ) {
                     for ( auto subCh : chapter->subchapters_ ) {
-                        children.push_back(subCh->id_);
+                        // not in vector
+                        if ( find(children.begin(), children.end(), subCh->id_ ) == children.end() ) {
+                            children.push_back(subCh->id_);
+                        }
                         if ( subCh->subchapters_.size() > 0 ) {
                             chapter = subCh;
                         }
@@ -178,11 +181,8 @@ void Book::printTotalLength(Params params) const
     auto chapter = findChapter(params.at(0));
     if ( chapter != nullptr ) {
         int length = chapter->length_;
+        length = countThroughRecursive(chapter->subchapters_, length);
 
-        for ( auto subCh : chapter->subchapters_ ) {
-            length += subCh->length_;
-            length = countThroughRecursive(subCh->subchapters_, length);
-        }
         std::cout << "Total length of " << params.at(0) << " is " << length << "." << std::endl;
     }
 }
@@ -190,22 +190,17 @@ void Book::printTotalLength(Params params) const
 void Book::printLongestInHierarchy(Params params) const
 {
     auto chapter = findChapter(params.at(0));
-    if ( chapter != nullptr ) {
-        int length = 0;
-        length += chapter->length_;
-        std::string id = "";
-        id = chapter->id_;
-        std::pair< int, std::string > result = {length, id};
+    std::pair< int, std::string > result = {chapter->length_, chapter->id_};
 
-        for ( auto subCh : chapter->subchapters_ ) {
-            if ( subCh->length_ > result.first ) {
-                result.first = subCh->length_;
-                result.second = subCh->id_;
-            }
-            result = longestThroughRecursive(subCh->subchapters_, result);
+    if ( chapter != nullptr ) {
+        result = longestThroughRecursive(chapter->subchapters_, result);
+        if ( result.second == chapter->id_ ) {
+            std::cout << "With the length of " << result.first << ", " << result.second
+                      << " is the longest chapter in their hierarchy." << std::endl;
+        } else {
+            std::cout << "With the length of " << result.first << ", " << result.second
+                      << " is the longest chapter in " << params.at(0) << "'s hierarchy." << std::endl;
         }
-        std::cout << "With the length of " << result.first << ", " << result.second
-                  << " is the longest in " << params.at(0) << "'s hierarchy." << std::endl;
     }
 }
 
@@ -227,7 +222,7 @@ void Book::printShortestInHierarchy(Params params) const
             result = shortestThroughRecursive(subCh->subchapters_, result);
         }
         std::cout << "With the length of " << result.first << ", " << result.second
-                  << " is the shortest in " << params.at(0) << "'s hierarchy." << std::endl;
+                  << " is the shortest chapter in " << params.at(0) << "'s hierarchy." << std::endl;
     }
 }
 
@@ -320,7 +315,7 @@ int Book::countThroughRecursive(std::vector<Chapter *> subCh, int length) const
     if ( subCh.size() > 0 ) {
         for ( auto subchapter : subCh) {
             length += subchapter->length_;
-            countThroughRecursive(subchapter->subchapters_, length);
+            length = countThroughRecursive(subchapter->subchapters_, length);
         }
     }
 
@@ -385,24 +380,23 @@ Chapter* Book::returnSubChapter(Chapter *chapter) const
 std::pair< int, std::string > Book::longestThroughRecursive(std::vector<Chapter *> subCh, std::pair <int, std::string > result) const
 {
     if ( subCh.size() > 0 ) {
-        for ( auto *subchapter : subCh) {
+        for ( auto subchapter : subCh) {
             if ( subchapter->length_ > result.first ) {
 
                 result.first = subchapter->length_;
                 result.second = subchapter->id_;
             }
-            if ( subchapter->subchapters_.size() > 0 ) {
-                longestThroughRecursive(subchapter->subchapters_, result);
-            }
+            result = longestThroughRecursive(subchapter->subchapters_, result);
         }
-    } else { return result; }
+    }
     return result;
 }
 
 std::pair<int, std::string> Book::shortestThroughRecursive(std::vector<Chapter *> subCh, std::pair<int, std::string> result) const
 {
+
     if ( subCh.size() > 0 ) {
-        for ( auto *subchapter : subCh) {
+        for ( auto subchapter : subCh) {
             if ( subchapter->length_ < result.first ) {
 
                 result.first = subchapter->length_;
