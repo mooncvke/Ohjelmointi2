@@ -304,8 +304,8 @@ void Book::goThroughRecursive(std::vector<Chapter*> subChapter, bool open ) cons
         // go through subChapter's subchapters and change their open_-value to
         // the value given in open-parameter
         for ( auto subchapter : subChapter ) {
-            subchapter->open_ = open;
             if ( subchapter->subchapters_.size() > 0 ) {
+                subchapter->open_ = open;
                 goThroughRecursive(subchapter->subchapters_, open);
             }
         }
@@ -376,8 +376,6 @@ void Book::printChapters(std::vector<std::string> &chapters,
         }
     }
 }
-
-
 
 std::pair< int, std::string > Book::longestAndShortest(std::vector<Chapter *> subCh,
                                                        std::pair <int, std::string> result,
