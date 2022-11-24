@@ -190,9 +190,9 @@ void Book::printTotalLength(Params params) const
 void Book::printLongestInHierarchy(Params params) const
 {
     auto chapter = findChapter(params.at(0));
-    std::pair< int, std::string > result = {chapter->length_, chapter->id_};
 
     if ( chapter != nullptr ) {
+        std::pair< int, std::string > result = {chapter->length_, chapter->id_};
         result = longestThroughRecursive(chapter->subchapters_, result);
         if ( result.second == chapter->id_ ) {
             std::cout << "With the length of " << result.first << ", " << result.second
@@ -394,7 +394,6 @@ std::pair< int, std::string > Book::longestThroughRecursive(std::vector<Chapter 
 
 std::pair<int, std::string> Book::shortestThroughRecursive(std::vector<Chapter *> subCh, std::pair<int, std::string> result) const
 {
-
     if ( subCh.size() > 0 ) {
         for ( auto subchapter : subCh) {
             if ( subchapter->length_ < result.first ) {
