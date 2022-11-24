@@ -222,7 +222,7 @@ void Book::printShortestInHierarchy(Params params) const
             result = shortestThroughRecursive(subCh->subchapters_, result);
         }
         std::cout << "With the length of " << result.first << ", " << result.second
-                  << " is the shortest chapter in " << params.at(0) << "'s hierarchy." << std::endl;
+                  << " is the shortest chapter in their hierarchy." << std::endl;
     }
 }
 
