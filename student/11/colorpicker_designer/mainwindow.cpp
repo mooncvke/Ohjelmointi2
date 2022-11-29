@@ -1,12 +1,22 @@
 #include "mainwindow.hh"
 #include "ui_mainwindow.h"
 #include <QDebug>
+#include <QSpinBox>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    ui->spinBoxRed->setMinimum(0);
+    ui->spinBoxRed->setMaximum(RGB_VALUE_MAX);
+
+    ui->spinBoxGreen->setMinimum(0);
+    ui->spinBoxGreen->setMaximum(RGB_VALUE_MAX);
+
+    ui->spinBoxBlue->setMinimum(0);
+    ui->spinBoxBlue->setMaximum(RGB_VALUE_MAX);
 
     ui->horizontalSliderRed->setMinimum(0);
     ui->horizontalSliderRed->setMaximum(RGB_VALUE_MAX);
