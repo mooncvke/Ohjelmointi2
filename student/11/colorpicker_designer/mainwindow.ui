@@ -137,49 +137,49 @@
  <connections>
   <connection>
    <sender>horizontalSliderRed</sender>
-   <signal>sliderMoved(int)</signal>
+   <signal>valueChanged(int)</signal>
    <receiver>spinBoxRed</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>210</x>
-     <y>130</y>
+     <x>211</x>
+     <y>129</y>
     </hint>
     <hint type="destinationlabel">
-     <x>276</x>
+     <x>289</x>
      <y>140</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>horizontalSliderGreen</sender>
-   <signal>sliderMoved(int)</signal>
+   <signal>valueChanged(int)</signal>
    <receiver>spinBoxGreen</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>206</x>
-     <y>170</y>
+     <x>218</x>
+     <y>180</y>
     </hint>
     <hint type="destinationlabel">
-     <x>276</x>
-     <y>173</y>
+     <x>275</x>
+     <y>181</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>horizontalSliderBlue</sender>
-   <signal>sliderMoved(int)</signal>
+   <signal>valueChanged(int)</signal>
    <receiver>spinBoxBlue</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>189</x>
-     <y>226</y>
+     <x>171</x>
+     <y>225</y>
     </hint>
     <hint type="destinationlabel">
-     <x>271</x>
-     <y>222</y>
+     <x>267</x>
+     <y>223</y>
     </hint>
    </hints>
   </connection>
