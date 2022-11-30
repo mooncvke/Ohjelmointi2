@@ -8,7 +8,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     // connect sklots and receivers
-
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &MainWindow::onTimerTimeout);
+    // start timer
+    timer->setInterval(1000);
     connect(ui->startButton, &QPushButton::clicked, this, &MainWindow::onStartButtonClicked);
     connect(ui->stopButton, &QPushButton::clicked, this, &MainWindow::onStopButtonClicked);
     connect(ui->closeButton, &QPushButton::clicked, this, &MainWindow::onCloseButtonClicked);
@@ -22,14 +25,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::onStartButtonClicked()
 {
-    // check if timer is on
-    if ( !timer ) {
-        timer = new QTimer();
-        connect(timer, &QTimer::timeout, this, &MainWindow::onTimerTimeout);
-        // start timer
-        timer->setInterval(1000);
-        timer->start();
-    }
+    timer->start();
 }
 
 void MainWindow::onStopButtonClicked()
